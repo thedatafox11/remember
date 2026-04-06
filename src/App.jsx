@@ -131,11 +131,11 @@ function ImportScreen({ onImport, onDemo }) {
 
       <div style={{ maxWidth: "460px", width: "100%", animation: "fadeUp 0.5s ease forwards" }}>
         <div style={{ marginBottom: "44px" }}>
-          <div style={{ fontSize: "10px", letterSpacing: "0.14em", textTransform: "uppercase", color: "#3a3530", fontFamily: "'DM Mono', monospace", marginBottom: "6px" }}>welcome to</div>
+          <div style={{ fontSize: "10px", letterSpacing: "0.14em", textTransform: "uppercase", color: "#6b6560", fontFamily: "'DM Mono', monospace", marginBottom: "6px" }}>welcome to</div>
           <h1 style={{ margin: "0 0 10px", fontSize: "44px", fontWeight: 300, letterSpacing: "-0.03em", color: "#f0ece4" }}>
             remember<span style={{ color: "#c8b89a" }}>.</span>
           </h1>
-          <p style={{ margin: 0, fontSize: "14px", color: "#5a5248", lineHeight: "1.65", fontFamily: "'Lora', serif" }}>
+          <p style={{ margin: 0, fontSize: "14px", color: "#8a8278", lineHeight: "1.65", fontFamily: "'Lora', serif" }}>
             Your X bookmarks, actually organised. Import your archive and AI sorts everything automatically.
           </p>
         </div>
@@ -158,7 +158,7 @@ function ImportScreen({ onImport, onDemo }) {
           <div style={{ fontSize: "14px", fontWeight: 500, color: "#c8c0b4", marginBottom: "6px" }}>
             Drop your <code style={{ fontFamily: "'DM Mono', monospace", fontSize: "12px", color: "#c8b89a", background: "rgba(200,184,154,0.08)", padding: "1px 5px", borderRadius: "4px" }}>bookmarks.js</code> file here
           </div>
-          <div style={{ fontSize: "11px", color: "#3a3530", fontFamily: "'DM Mono', monospace", letterSpacing: "0.04em" }}>or click to browse</div>
+          <div style={{ fontSize: "11px", color: "#6b6560", fontFamily: "'DM Mono', monospace", letterSpacing: "0.04em" }}>or click to browse</div>
         </div>
 
         {error && (
@@ -169,25 +169,25 @@ function ImportScreen({ onImport, onDemo }) {
 
         {/* Instructions */}
         <div style={{ background: "rgba(255,255,255,0.02)", border: "1px solid rgba(255,255,255,0.05)", borderRadius: "12px", padding: "16px 18px", marginBottom: "20px" }}>
-          <div style={{ fontSize: "10px", color: "#4a4540", fontFamily: "'DM Mono', monospace", fontWeight: 600, letterSpacing: "0.08em", textTransform: "uppercase", marginBottom: "12px" }}>How to get your file</div>
+          <div style={{ fontSize: "10px", color: "#7a7570", fontFamily: "'DM Mono', monospace", fontWeight: 600, letterSpacing: "0.08em", textTransform: "uppercase", marginBottom: "12px" }}>How to get your file</div>
           {["Go to X → Settings → Your Account", "Tap Download an archive of your data", "Wait for the download email (mins to hours)", "Unzip it — find bookmarks.js inside", "Drop it above ↑"].map((s, i) => (
             <div key={i} style={{ display: "flex", gap: "10px", marginBottom: i < 4 ? "7px" : 0 }}>
               <span style={{ fontSize: "10px", color: "#c8b89a", fontFamily: "'DM Mono', monospace", fontWeight: 600, flexShrink: 0, marginTop: "2px" }}>{i + 1}</span>
-              <span style={{ fontSize: "12px", color: "#5a5248", lineHeight: "1.5" }}>{s}</span>
+              <span style={{ fontSize: "12px", color: "#8a8278", lineHeight: "1.5" }}>{s}</span>
             </div>
           ))}
         </div>
 
         <div style={{ display: "flex", alignItems: "center", gap: "12px", marginBottom: "16px" }}>
           <div style={{ flex: 1, height: "1px", background: "rgba(255,255,255,0.05)" }} />
-          <span style={{ fontSize: "10px", color: "#2e2a26", fontFamily: "'DM Mono', monospace" }}>OR</span>
+          <span style={{ fontSize: "10px", color: "#5a5450", fontFamily: "'DM Mono', monospace" }}>OR</span>
           <div style={{ flex: 1, height: "1px", background: "rgba(255,255,255,0.05)" }} />
         </div>
 
         <button onClick={onDemo}
-          style={{ width: "100%", padding: "13px", borderRadius: "12px", background: "transparent", border: "1px solid rgba(255,255,255,0.07)", color: "#4a4540", fontSize: "13px", fontFamily: "'DM Sans', sans-serif", cursor: "pointer", transition: "all 0.2s ease" }}
-          onMouseEnter={e => { e.currentTarget.style.color = "#a89e94"; e.currentTarget.style.borderColor = "rgba(255,255,255,0.13)"; }}
-          onMouseLeave={e => { e.currentTarget.style.color = "#4a4540"; e.currentTarget.style.borderColor = "rgba(255,255,255,0.07)"; }}
+          style={{ width: "100%", padding: "13px", borderRadius: "12px", background: "transparent", border: "1px solid rgba(255,255,255,0.07)", color: "#7a7570", fontSize: "13px", fontFamily: "'DM Sans', sans-serif", cursor: "pointer", transition: "all 0.2s ease" }}
+          onMouseEnter={e => { e.currentTarget.style.color = "#ccc4ba"; e.currentTarget.style.borderColor = "rgba(255,255,255,0.13)"; }}
+          onMouseLeave={e => { e.currentTarget.style.color = "#7a7570"; e.currentTarget.style.borderColor = "rgba(255,255,255,0.07)"; }}
         >
           Try with demo bookmarks
         </button>
@@ -215,17 +215,17 @@ function BookmarkCard({ bookmark, index }) {
         </div>
         <div style={{ flex: 1, minWidth: 0 }}>
           <div style={{ fontSize: "13px", fontWeight: 600, color: "#e8e0d6", letterSpacing: "-0.01em", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{bookmark.author}</div>
-          <div style={{ fontSize: "11px", color: "#524840", fontFamily: "'DM Mono',monospace" }}>@{bookmark.handle}</div>
+          <div style={{ fontSize: "11px", color: "#8a7e78", fontFamily: "'DM Mono',monospace" }}>@{bookmark.handle}</div>
         </div>
-        <div style={{ fontSize: "10px", color: "#3e3830", fontFamily: "'DM Mono',monospace", flexShrink: 0 }}>{formatDate(bookmark.date)}</div>
+        <div style={{ fontSize: "10px", color: "#7e7268", fontFamily: "'DM Mono',monospace", flexShrink: 0 }}>{formatDate(bookmark.date)}</div>
       </div>
 
-      <p style={{ margin: 0, fontSize: "13.5px", lineHeight: "1.7", color: "#a89e94", fontFamily: "'Lora',Georgia,serif", letterSpacing: "0.005em" }}>{bookmark.text}</p>
+      <p style={{ margin: 0, fontSize: "13.5px", lineHeight: "1.7", color: "#d4cdc6", fontFamily: "'Lora',Georgia,serif", letterSpacing: "0.005em" }}>{bookmark.text}</p>
 
       {bookmark.summary && (
         <div style={{ background: "rgba(255,255,255,0.025)", borderRadius: "8px", padding: "8px 12px", display: "flex", gap: "8px", alignItems: "flex-start" }}>
           <span style={{ fontSize: "9px", color: "#c8b89a", fontFamily: "'DM Mono',monospace", fontWeight: 600, letterSpacing: "0.08em", textTransform: "uppercase", flexShrink: 0, marginTop: "1px" }}>AI</span>
-          <span style={{ fontSize: "11.5px", color: "#6a6058", lineHeight: "1.5", fontStyle: "italic" }}>{bookmark.summary}</span>
+          <span style={{ fontSize: "11.5px", color: "#a09890", lineHeight: "1.5", fontStyle: "italic" }}>{bookmark.summary}</span>
         </div>
       )}
 
@@ -234,8 +234,8 @@ function BookmarkCard({ bookmark, index }) {
           <span style={{ width: 4, height: 4, borderRadius: "50%", background: c.dot, display: "inline-block" }} />{bookmark.topic}
         </span>
         <div style={{ display: "flex", gap: "12px" }}>
-          <span style={{ fontSize: "10px", color: "#3a3530", fontFamily: "'DM Mono',monospace" }}>♥ {Number(bookmark.likes).toLocaleString()}</span>
-          <span style={{ fontSize: "10px", color: "#3a3530", fontFamily: "'DM Mono',monospace" }}>⟳ {Number(bookmark.reposts).toLocaleString()}</span>
+          <span style={{ fontSize: "10px", color: "#6b6560", fontFamily: "'DM Mono',monospace" }}>♥ {Number(bookmark.likes).toLocaleString()}</span>
+          <span style={{ fontSize: "10px", color: "#6b6560", fontFamily: "'DM Mono',monospace" }}>⟳ {Number(bookmark.reposts).toLocaleString()}</span>
         </div>
       </div>
     </div>
@@ -245,7 +245,7 @@ function BookmarkCard({ bookmark, index }) {
 function MonthDivider({ label }) {
   return (
     <div style={{ display: "flex", alignItems: "center", gap: "14px", margin: "32px 0 16px" }}>
-      <div style={{ fontSize: "10px", color: "#4a4540", fontFamily: "'DM Mono',monospace", fontWeight: 600, letterSpacing: "0.1em", textTransform: "uppercase", flexShrink: 0 }}>{label}</div>
+      <div style={{ fontSize: "10px", color: "#7a7570", fontFamily: "'DM Mono',monospace", fontWeight: 600, letterSpacing: "0.1em", textTransform: "uppercase", flexShrink: 0 }}>{label}</div>
       <div style={{ flex: 1, height: "1px", background: "rgba(255,255,255,0.05)" }} />
     </div>
   );
@@ -289,7 +289,7 @@ function LibraryView({ bookmarks, aiStatus, isDemo, onReset }) {
         ::-webkit-scrollbar { width: 4px; }
         ::-webkit-scrollbar-thumb { background: #2a2520; border-radius: 2px; }
         input:focus,select:focus { outline: none; }
-        input::placeholder { color: #302a26; }
+        input::placeholder { color: #6a5e58; }
         select option { background: #1a1614; }
         @keyframes pulse { 0%,100%{opacity:.4} 50%{opacity:1} }
         @keyframes spin { to{transform:rotate(360deg)} }
@@ -307,16 +307,16 @@ function LibraryView({ bookmarks, aiStatus, isDemo, onReset }) {
           <div style={{ display: "flex", alignItems: "flex-end", justifyContent: "space-between", marginBottom: "18px" }}>
             <div>
               {isDemo && <div style={{ fontSize: "9px", letterSpacing: "0.1em", textTransform: "uppercase", color: "#c8b89a", fontFamily: "'DM Mono',monospace", marginBottom: "3px", opacity: 0.6 }}>demo mode</div>}
-              <div style={{ fontSize: "10px", letterSpacing: "0.14em", textTransform: "uppercase", color: "#3a3530", fontFamily: "'DM Mono',monospace", marginBottom: "4px" }}>your library</div>
+              <div style={{ fontSize: "10px", letterSpacing: "0.14em", textTransform: "uppercase", color: "#6b6560", fontFamily: "'DM Mono',monospace", marginBottom: "4px" }}>your library</div>
               <h1 style={{ margin: 0, fontSize: "28px", fontWeight: 300, letterSpacing: "-0.03em", color: "#f0ece4" }}>remember<span style={{ color: "#c8b89a" }}>.</span></h1>
             </div>
 
             <div style={{ display: "flex", flexDirection: "column", alignItems: "flex-end", gap: "5px" }}>
               <div style={{ textAlign: "right" }}>
                 <div style={{ fontSize: "22px", fontWeight: 300, color: "#f0ece4", letterSpacing: "-0.02em", fontFamily: "'DM Mono',monospace" }}>
-                  {filtered.length}<span style={{ fontSize: "12px", color: "#3a3530" }}>/{bookmarks.length}</span>
+                  {filtered.length}<span style={{ fontSize: "12px", color: "#6b6560" }}>/{bookmarks.length}</span>
                 </div>
-                <div style={{ fontSize: "10px", color: "#3a3530", letterSpacing: "0.08em", textTransform: "uppercase", fontFamily: "'DM Mono',monospace" }}>bookmarks</div>
+                <div style={{ fontSize: "10px", color: "#6b6560", letterSpacing: "0.08em", textTransform: "uppercase", fontFamily: "'DM Mono',monospace" }}>bookmarks</div>
               </div>
 
               <div style={{ display: "flex", alignItems: "center", gap: "5px", padding: "3px 8px", borderRadius: "20px", background: aiStatus === "done" ? "rgba(154,230,180,0.07)" : "rgba(200,184,154,0.07)", border: `1px solid ${aiStatus === "done" ? "rgba(154,230,180,0.18)" : "rgba(200,184,154,0.13)"}` }}>
@@ -328,30 +328,30 @@ function LibraryView({ bookmarks, aiStatus, isDemo, onReset }) {
               </div>
 
               <button onClick={onReset}
-                style={{ padding: "2px 8px", borderRadius: "20px", cursor: "pointer", fontSize: "9px", fontFamily: "'DM Mono',monospace", fontWeight: 600, letterSpacing: "0.07em", textTransform: "uppercase", background: "transparent", border: "1px solid rgba(255,255,255,0.07)", color: "#3a3530", transition: "all 0.15s ease" }}
+                style={{ padding: "2px 8px", borderRadius: "20px", cursor: "pointer", fontSize: "9px", fontFamily: "'DM Mono',monospace", fontWeight: 600, letterSpacing: "0.07em", textTransform: "uppercase", background: "transparent", border: "1px solid rgba(255,255,255,0.07)", color: "#6b6560", transition: "all 0.15s ease" }}
                 onMouseEnter={e => { e.currentTarget.style.color = "#c8b89a"; e.currentTarget.style.borderColor = "rgba(200,184,154,0.25)"; }}
-                onMouseLeave={e => { e.currentTarget.style.color = "#3a3530"; e.currentTarget.style.borderColor = "rgba(255,255,255,0.07)"; }}
+                onMouseLeave={e => { e.currentTarget.style.color = "#6b6560"; e.currentTarget.style.borderColor = "rgba(255,255,255,0.07)"; }}
               >{isDemo ? "import my bookmarks" : "reimport"}</button>
             </div>
           </div>
 
           {/* Search */}
           <div style={{ display: "flex", alignItems: "center", gap: "10px", background: "rgba(255,255,255,0.03)", border: "1px solid rgba(255,255,255,0.06)", borderRadius: "10px", padding: "10px 16px", marginBottom: "12px" }}>
-            <span style={{ color: "#302a26", fontSize: "13px" }}>⌕</span>
+            <span style={{ color: "#6a5e58", fontSize: "13px" }}>⌕</span>
             <input value={search} onChange={e => setSearch(e.target.value)} placeholder="Search by keyword, author, or topic..."
               style={{ flex: 1, background: "none", border: "none", color: "#f0ece4", fontSize: "13px", fontFamily: "'DM Sans',sans-serif" }} />
-            {search && <button onClick={() => setSearch("")} style={{ background: "none", border: "none", color: "#4a4540", cursor: "pointer", fontSize: "15px", padding: 0 }}>×</button>}
+            {search && <button onClick={() => setSearch("")} style={{ background: "none", border: "none", color: "#7a7570", cursor: "pointer", fontSize: "15px", padding: 0 }}>×</button>}
           </div>
 
           {/* Filters */}
           <div style={{ display: "flex", gap: "7px", alignItems: "center", flexWrap: "wrap" }}>
             {[["newest","Newest first"],["oldest","Oldest first"]].map(([v, l]) => null)}
-            <select value={sortOrder} onChange={e => setSortOrder(e.target.value)} style={{ background: "rgba(255,255,255,0.03)", border: "1px solid rgba(255,255,255,0.07)", borderRadius: "8px", padding: "4px 10px", color: sortOrder !== "newest" ? "#c8b89a" : "#5a5248", fontSize: "10px", fontFamily: "'DM Mono',monospace", fontWeight: 600, letterSpacing: "0.06em", textTransform: "uppercase", cursor: "pointer" }}>
+            <select value={sortOrder} onChange={e => setSortOrder(e.target.value)} style={{ background: "rgba(255,255,255,0.03)", border: "1px solid rgba(255,255,255,0.07)", borderRadius: "8px", padding: "4px 10px", color: sortOrder !== "newest" ? "#c8b89a" : "#8a8278", fontSize: "10px", fontFamily: "'DM Mono',monospace", fontWeight: 600, letterSpacing: "0.06em", textTransform: "uppercase", cursor: "pointer" }}>
               <option value="newest">Newest first</option>
               <option value="oldest">Oldest first</option>
             </select>
 
-            <select value={selectedMonth || ""} onChange={e => setSelectedMonth(e.target.value || null)} style={{ background: selectedMonth ? "rgba(200,184,154,0.08)" : "rgba(255,255,255,0.03)", border: selectedMonth ? "1px solid rgba(200,184,154,0.25)" : "1px solid rgba(255,255,255,0.07)", borderRadius: "8px", padding: "4px 10px", color: selectedMonth ? "#c8b89a" : "#5a5248", fontSize: "10px", fontFamily: "'DM Mono',monospace", fontWeight: 600, letterSpacing: "0.06em", textTransform: "uppercase", cursor: "pointer" }}>
+            <select value={selectedMonth || ""} onChange={e => setSelectedMonth(e.target.value || null)} style={{ background: selectedMonth ? "rgba(200,184,154,0.08)" : "rgba(255,255,255,0.03)", border: selectedMonth ? "1px solid rgba(200,184,154,0.25)" : "1px solid rgba(255,255,255,0.07)", borderRadius: "8px", padding: "4px 10px", color: selectedMonth ? "#c8b89a" : "#8a8278", fontSize: "10px", fontFamily: "'DM Mono',monospace", fontWeight: 600, letterSpacing: "0.06em", textTransform: "uppercase", cursor: "pointer" }}>
               <option value="">All months</option>
               {allMonths.map(m => <option key={m} value={m}>{m}</option>)}
             </select>
@@ -362,14 +362,14 @@ function LibraryView({ bookmarks, aiStatus, isDemo, onReset }) {
               const c = TOPIC_COLORS[topic] || TOPIC_COLORS["Other"];
               const active = selectedTopic === topic;
               return (
-                <button key={topic} onClick={() => setSelectedTopic(active ? null : topic)} style={{ padding: "3px 9px", borderRadius: "20px", cursor: "pointer", fontSize: "10px", fontFamily: "'DM Mono',monospace", fontWeight: 600, letterSpacing: "0.06em", textTransform: "uppercase", background: active ? c.bg : "transparent", border: active ? `1px solid ${c.border}` : "1px solid rgba(255,255,255,0.06)", color: active ? c.dot : "#4a4540", transition: "all 0.15s ease" }}>
+                <button key={topic} onClick={() => setSelectedTopic(active ? null : topic)} style={{ padding: "3px 9px", borderRadius: "20px", cursor: "pointer", fontSize: "10px", fontFamily: "'DM Mono',monospace", fontWeight: 600, letterSpacing: "0.06em", textTransform: "uppercase", background: active ? c.bg : "transparent", border: active ? `1px solid ${c.border}` : "1px solid rgba(255,255,255,0.06)", color: active ? c.dot : "#7a7570", transition: "all 0.15s ease" }}>
                   {topic}
                 </button>
               );
             })}
 
             {(selectedTopic || selectedMonth || search) && (
-              <button onClick={() => { setSelectedTopic(null); setSelectedMonth(null); setSearch(""); }} style={{ padding: "3px 9px", borderRadius: "20px", cursor: "pointer", fontSize: "10px", fontFamily: "'DM Mono',monospace", fontWeight: 600, letterSpacing: "0.06em", textTransform: "uppercase", background: "transparent", border: "1px solid rgba(255,255,255,0.06)", color: "#4a4540" }}>✕ clear</button>
+              <button onClick={() => { setSelectedTopic(null); setSelectedMonth(null); setSearch(""); }} style={{ padding: "3px 9px", borderRadius: "20px", cursor: "pointer", fontSize: "10px", fontFamily: "'DM Mono',monospace", fontWeight: 600, letterSpacing: "0.06em", textTransform: "uppercase", background: "transparent", border: "1px solid rgba(255,255,255,0.06)", color: "#7a7570" }}>✕ clear</button>
             )}
           </div>
         </div>
@@ -378,7 +378,7 @@ function LibraryView({ bookmarks, aiStatus, isDemo, onReset }) {
       {/* Feed */}
       <div style={{ maxWidth: "860px", margin: "0 auto", padding: "8px 40px 80px", opacity: mounted ? 1 : 0, transition: "opacity 0.5s ease 0.1s" }}>
         {filtered.length === 0 ? (
-          <div style={{ textAlign: "center", padding: "100px 0", color: "#3a3530", fontFamily: "'DM Mono',monospace", fontSize: "12px", letterSpacing: "0.06em" }}>no bookmarks found</div>
+          <div style={{ textAlign: "center", padding: "100px 0", color: "#6b6560", fontFamily: "'DM Mono',monospace", fontSize: "12px", letterSpacing: "0.06em" }}>no bookmarks found</div>
         ) : (
           <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(360px, 1fr))", gap: "10px", alignItems: "start" }}>
             {grouped.map(item => {
