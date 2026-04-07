@@ -21,22 +21,22 @@ const DEMO_BOOKMARKS = [
 ];
 
 const DEMO_CLASSIFIED = [
-  { id: 1,  topic: "Thinking & Ideas", summary: "Making things is the highest form of value — more than managing or analysing." },
-  { id: 2,  topic: "AI & Tech",        summary: "Natural language is becoming the new programming interface." },
-  { id: 3,  topic: "Life & Mindset",   summary: "Genuine curiosity makes reading feel effortless rather than obligatory." },
-  { id: 4,  topic: "Productivity",     summary: "Deep focus and saying no are the real levers of output." },
-  { id: 5,  topic: "Startups",         summary: "A small, intensely loyal user base beats mass indifference." },
-  { id: 6,  topic: "Startups",         summary: "Most people stall before they ever reach distribution or monetisation." },
-  { id: 7,  topic: "AI & Tech",        summary: "Neural networks find latent structure — they don't conjure it from nothing." },
-  { id: 8,  topic: "Life & Mindset",   summary: "More information isn't the bottleneck — execution and commitment are." },
-  { id: 9,  topic: "Leadership",       summary: "Great managers create space to be heard before directing." },
-  { id: 10, topic: "Thinking & Ideas", summary: "Beginners ask better questions because they haven't learned what's impossible." },
-  { id: 11, topic: "Life & Mindset",   summary: "Every desire is a standing agreement to feel dissatisfied until fulfilled." },
-  { id: 12, topic: "Productivity",     summary: "Obsessing over the problem, not the solution, is what separates great PMs." },
-  { id: 13, topic: "Startups",         summary: "Startups collapse from internal failure, not external competition." },
-  { id: 14, topic: "AI & Tech",        summary: "We're at the very start of an AI shift bigger than the internet." },
-  { id: 15, topic: "Life & Mindset",   summary: "A meaningful life and a big company are separate goals that rarely overlap." },
-  { id: 16, topic: "Leadership",       summary: "Private feedback is a gift; public feedback is just criticism." },
+  { id: 1,  topic: "Thinking & Ideas", summary: "Making things is the highest form of value — more than managing or analysing.",       actions: ["Write or ship one small thing today — a post, a tool, a sketch", "List 3 things you have been analysing that you could just start making"], execute: "build" },
+  { id: 2,  topic: "AI & Tech",        summary: "Natural language is becoming the new programming interface.",                         actions: ["Describe a feature you want in plain English and give it to an LLM", "Try prompt engineering on your next coding task"], execute: "build" },
+  { id: 3,  topic: "Life & Mindset",   summary: "Genuine curiosity makes reading feel effortless rather than obligatory.",             actions: ["Drop one thing you are forcing yourself to read", "Pick up something you are genuinely curious about — no guilt"], execute: "reflect" },
+  { id: 4,  topic: "Productivity",     summary: "Deep focus and saying no are the real levers of output.",                            actions: ["Identify your one most important task tomorrow and protect 2hrs for it", "Find one recurring commitment you could say no to this week"], execute: "notion" },
+  { id: 5,  topic: "Startups",         summary: "A small, intensely loyal user base beats mass indifference.",                        actions: ["Name 10 specific people who would genuinely love what you are building", "Talk to one of them today — not to pitch, to listen"], execute: "build" },
+  { id: 6,  topic: "Startups",         summary: "Most people stall before they ever reach distribution or monetisation.",              actions: ["Map where you honestly are in the Idea to Exit chain", "Pick the next step and set a deadline for this week"], execute: "notion" },
+  { id: 7,  topic: "AI & Tech",        summary: "Neural networks find latent structure — they do not conjure it from nothing.",        actions: ["Ask an LLM to explain a model you use but do not fully understand", "Read one short explainer on how transformers work"], execute: "build" },
+  { id: 8,  topic: "Life & Mindset",   summary: "More information is not the bottleneck — execution and commitment are.",              actions: ["Identify one thing you know enough about to start but have not", "Set a 20-minute timer and take the first step right now"], execute: "reflect" },
+  { id: 9,  topic: "Leadership",       summary: "Great managers create space to be heard before directing.",                          actions: ["In your next 1:1, ask two questions before giving any direction", "Notice how often you speak vs listen in meetings this week"], execute: "notion" },
+  { id: 10, topic: "Thinking & Ideas", summary: "Beginners ask better questions because they have not learned what is impossible.",    actions: ["Approach one familiar problem as if you had never seen it before", "Write 3 naive questions about your current project"], execute: "reflect" },
+  { id: 11, topic: "Life & Mindset",   summary: "Every desire is a standing agreement to feel dissatisfied until fulfilled.",         actions: ["List your top 3 active desires — are they worth the ongoing cost?", "Pick one to either pursue fully or consciously release"], execute: "reflect" },
+  { id: 12, topic: "Productivity",     summary: "Obsessing over the problem, not the solution, is what separates great PMs.",        actions: ["Write a one-paragraph problem statement — no solutions allowed", "Share it with someone and ask if they feel the pain too"], execute: "notion" },
+  { id: 13, topic: "Startups",         summary: "Startups collapse from internal failure, not external competition.",                 actions: ["Audit your team biggest internal friction point right now", "Have one honest conversation about it this week"], execute: "notion" },
+  { id: 14, topic: "AI & Tech",        summary: "We are at the very start of an AI shift bigger than the internet.",                  actions: ["Identify one part of your work AI could meaningfully improve", "Spend 30 mins experimenting with an AI tool in that area today"], execute: "build" },
+  { id: 15, topic: "Life & Mindset",   summary: "A meaningful life and a big company are separate goals that rarely overlap.",        actions: ["Write down what meaningful actually looks like for you specifically", "Check whether your current work moves toward or away from that"], execute: "reflect" },
+  { id: 16, topic: "Leadership",       summary: "Private feedback is a gift; public feedback is just criticism.",                    actions: ["Think of feedback you owe someone — schedule a private conversation", "Next time you want to correct someone, wait until you are 1:1"], execute: "notion" },
 ];
 
 // ─── X archive parser ─────────────────────────────────────────────────────────
@@ -52,6 +52,7 @@ function parseXArchive(text) {
     const avatar = author.split(" ").map(w => w[0]).join("").slice(0, 2).toUpperCase() || "??";
     return {
       id: i + 1,
+      tweetId: tweet.id_str || tweet.id || null,
       date: tweet.created_at ? new Date(tweet.created_at).toISOString().split("T")[0] : new Date().toISOString().split("T")[0],
       author, handle, avatar,
       text: (tweet.full_text || tweet.text || "").replace(/https?:\/\/t\.co\/\S+/g, "").trim(),
@@ -67,16 +68,17 @@ async function classifyWithAI(bookmarks, isDemo) {
     await new Promise(res => setTimeout(res, 1800));
     return DEMO_CLASSIFIED;
   }
-  const prompt = `You are a bookmark organiser. Classify each tweet into exactly one topic.
-Choose from: AI & Tech, Startups, Life & Mindset, Productivity, Thinking & Ideas, Leadership, Design, Finance, Health, Other.
-Return ONLY a JSON array, no markdown. Each item: {"id": number, "topic": "string", "summary": "one short sentence — the key idea distilled"}.
+  const prompt = `You are a bookmark organiser and action coach. For each tweet: classify it, summarise it, and generate 2 specific action steps.
+Choose topic from: AI & Tech, Startups, Life & Mindset, Productivity, Thinking & Ideas, Leadership, Design, Finance, Health, Other.
+Choose execute from: "build" (involves making/coding), "notion" (process/workflow/task), "reflect" (mindset/personal).
+Return ONLY a JSON array, no markdown. Each item: {"id": number, "topic": "string", "summary": "one short sentence", "actions": ["action 1", "action 2"], "execute": "build|notion|reflect"}.
 Tweets:
 ${bookmarks.slice(0, 80).map(b => `ID ${b.id} (@${b.handle}): ${b.text.slice(0, 200)}`).join("\n")}`;
 
   const res = await fetch("/api/classify", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ model: "claude-sonnet-4-20250514", max_tokens: 1000, messages: [{ role: "user", content: prompt }] }),
+    body: JSON.stringify({ model: "claude-sonnet-4-20250514", max_tokens: 2000, messages: [{ role: "user", content: prompt }] }),
   });
   const data = await res.json();
   const text = data.content.map(i => i.text || "").join("").replace(/```json|```/g, "").trim();
@@ -223,19 +225,56 @@ function BookmarkCard({ bookmark, index }) {
       <p style={{ margin: 0, fontSize: "13.5px", lineHeight: "1.7", color: "#d4cdc6", fontFamily: "'Lora',Georgia,serif", letterSpacing: "0.005em" }}>{bookmark.text}</p>
 
       {bookmark.summary && (
-        <div style={{ background: "rgba(255,255,255,0.025)", borderRadius: "8px", padding: "8px 12px", display: "flex", gap: "8px", alignItems: "flex-start" }}>
-          <span style={{ fontSize: "9px", color: "#c8b89a", fontFamily: "'DM Mono',monospace", fontWeight: 600, letterSpacing: "0.08em", textTransform: "uppercase", flexShrink: 0, marginTop: "1px" }}>AI</span>
-          <span style={{ fontSize: "11.5px", color: "#a09890", lineHeight: "1.5", fontStyle: "italic" }}>{bookmark.summary}</span>
+        <div style={{ background: "rgba(255,255,255,0.025)", borderRadius: "8px", padding: "10px 12px", display: "flex", gap: "8px", alignItems: "flex-start" }}>
+          <span style={{ fontSize: "9px", color: "#c8b89a", fontFamily: "'DM Mono',monospace", fontWeight: 600, letterSpacing: "0.08em", textTransform: "uppercase", flexShrink: 0, marginTop: "2px" }}>TL;DR</span>
+          <span style={{ fontSize: "12px", color: "#c0b8b0", lineHeight: "1.55", fontStyle: "italic" }}>{bookmark.summary}</span>
         </div>
       )}
 
-      <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", paddingTop: "4px", borderTop: "1px solid rgba(255,255,255,0.04)" }}>
+      {bookmark.actions && bookmark.actions.length > 0 && (
+        <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
+          <div style={{ fontSize: "9px", color: "#7a7570", fontFamily: "'DM Mono',monospace", fontWeight: 600, letterSpacing: "0.08em", textTransform: "uppercase" }}>Actions</div>
+          {bookmark.actions.map((action, i) => (
+            <div key={i} style={{ display: "flex", gap: "8px", alignItems: "flex-start" }}>
+              <span style={{ fontSize: "10px", color: c.dot, fontFamily: "'DM Mono',monospace", fontWeight: 700, flexShrink: 0, marginTop: "2px" }}>{i + 1}</span>
+              <span style={{ fontSize: "12px", color: "#c8c0b8", lineHeight: "1.5" }}>{action}</span>
+            </div>
+          ))}
+        </div>
+      )}
+
+      <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", paddingTop: "8px", borderTop: "1px solid rgba(255,255,255,0.04)" }}>
         <span style={{ fontSize: "10px", fontWeight: 600, letterSpacing: "0.07em", textTransform: "uppercase", color: c.dot, fontFamily: "'DM Mono',monospace", display: "flex", alignItems: "center", gap: "5px" }}>
           <span style={{ width: 4, height: 4, borderRadius: "50%", background: c.dot, display: "inline-block" }} />{bookmark.topic}
         </span>
-        <div style={{ display: "flex", gap: "12px" }}>
+        <div style={{ display: "flex", gap: "6px", alignItems: "center" }}>
+
+          {/* Tweet link */}
+          <a href={bookmark.tweetId ? `https://twitter.com/${bookmark.handle}/status/${bookmark.tweetId}` : `https://twitter.com/${bookmark.handle}`} target="_blank" rel="noopener noreferrer"
+            style={{ fontSize: "9px", padding: "3px 8px", borderRadius: "20px", background: "rgba(255,255,255,0.04)", border: "1px solid rgba(255,255,255,0.1)", color: "#8a8278", fontFamily: "'DM Mono',monospace", fontWeight: 600, letterSpacing: "0.06em", textTransform: "uppercase", textDecoration: "none", display: "flex", alignItems: "center", gap: "4px" }}>
+            <svg width="10" height="10" viewBox="0 0 24 24" fill="currentColor"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-4.714-6.231-5.401 6.231H2.746l7.73-8.835L1.254 2.25H8.08l4.261 5.635 5.903-5.635zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
+            View
+          </a>
+
+          {/* Claude button */}
+          {(bookmark.execute === "build" || bookmark.execute === "reflect") && (
+            <a href={`https://claude.ai/new?q=${encodeURIComponent("Help me act on this idea: " + bookmark.text)}`} target="_blank" rel="noopener noreferrer"
+              style={{ fontSize: "9px", padding: "3px 8px", borderRadius: "20px", background: "rgba(99,179,237,0.1)", border: "1px solid rgba(99,179,237,0.25)", color: "#63b3ed", fontFamily: "'DM Mono',monospace", fontWeight: 600, letterSpacing: "0.06em", textTransform: "uppercase", textDecoration: "none", display: "flex", alignItems: "center", gap: "4px" }}>
+              <svg width="10" height="10" viewBox="0 0 24 24" fill="currentColor"><path d="M4.304 15.978c.142.355.296.694.462 1.015l-1.6 4.8a.667.667 0 0 0 .84.84l4.8-1.6c.321.166.66.32 1.015.462L12 24l2.179-2.505c.355-.142.694-.296 1.015-.462l4.8 1.6a.667.667 0 0 0 .84-.84l-1.6-4.8c.166-.321.32-.66.462-1.015L24 12l-2.504-2.178a13.17 13.17 0 0 0-.462-1.015l1.6-4.8a.667.667 0 0 0-.84-.84l-4.8 1.6a13.17 13.17 0 0 0-1.015-.463L12 0 9.821 2.504c-.355.142-.694.297-1.015.463l-4.8-1.6a.667.667 0 0 0-.84.84l1.6 4.8A13.17 13.17 0 0 0 4.304 8.02L1.8 10.197 0 12l2.504 2.178c.142.321.296.66.462.978z"/></svg>
+              Claude
+            </a>
+          )}
+
+          {/* Notion button */}
+          {bookmark.execute === "notion" && (
+            <a href="https://notion.so/new" target="_blank" rel="noopener noreferrer"
+              style={{ fontSize: "9px", padding: "3px 8px", borderRadius: "20px", background: "rgba(255,255,255,0.06)", border: "1px solid rgba(255,255,255,0.14)", color: "#d4cdc6", fontFamily: "'DM Mono',monospace", fontWeight: 600, letterSpacing: "0.06em", textTransform: "uppercase", textDecoration: "none", display: "flex", alignItems: "center", gap: "4px" }}>
+              <svg width="10" height="10" viewBox="0 0 24 24" fill="currentColor"><path d="M4.459 4.208c.746.606 1.026.56 2.428.466l13.215-.793c.28 0 .047-.28-.046-.326L17.86 1.968c-.42-.326-.981-.7-2.055-.607L3.01 2.295c-.466.046-.56.28-.374.466zm.793 3.08v13.904c0 .747.373 1.027 1.214.98l14.523-.84c.841-.047.935-.56.935-1.167V6.354c0-.606-.233-.933-.748-.887l-15.177.887c-.56.047-.747.327-.747.933zm14.337.745c.093.42 0 .84-.42.888l-.7.14v10.264c-.608.327-1.168.514-1.635.514-.748 0-.935-.234-1.495-.933l-4.577-7.186v6.952L12.21 19s0 .84-1.168.84l-3.222.186c-.093-.186 0-.653.327-.746l.84-.233V9.854L7.822 9.76c-.094-.42.14-1.026.793-1.073l3.456-.233 4.764 7.279v-6.44l-1.215-.14c-.093-.514.28-.887.747-.933zM1.936 1.035l13.31-.98c1.634-.14 2.055-.047 3.082.7l4.249 2.986c.7.513.934.653.934 1.213v16.378c0 1.026-.373 1.634-1.68 1.726l-15.458.934c-.98.047-1.448-.093-1.962-.747l-3.129-4.06c-.56-.747-.793-1.306-.793-1.96V2.667c0-.839.374-1.54 1.447-1.632z"/></svg>
+              Notion
+            </a>
+          )}
+
           <span style={{ fontSize: "10px", color: "#6b6560", fontFamily: "'DM Mono',monospace" }}>♥ {Number(bookmark.likes).toLocaleString()}</span>
-          <span style={{ fontSize: "10px", color: "#6b6560", fontFamily: "'DM Mono',monospace" }}>⟳ {Number(bookmark.reposts).toLocaleString()}</span>
         </div>
       </div>
     </div>
@@ -410,7 +449,7 @@ export default function App() {
       const results = await classifyWithAI(raw, demo);
       const lookup = {};
       results.forEach(r => { lookup[r.id] = r; });
-      setBookmarks(raw.map(b => ({ ...b, topic: lookup[b.id]?.topic || "Other", summary: lookup[b.id]?.summary || null })));
+      setBookmarks(raw.map(b => ({ ...b, topic: lookup[b.id]?.topic || "Other", summary: lookup[b.id]?.summary || null, actions: lookup[b.id]?.actions || [], execute: lookup[b.id]?.execute || null })));
       setAiStatus("done");
     } catch {
       setBookmarks(raw.map(b => ({ ...b, topic: "Other", summary: null })));
