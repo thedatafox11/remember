@@ -425,7 +425,7 @@ ID ${raw[0].id} (@${raw[0].handle}): ${raw[0].text}`;
 }
 
 // ─── Library view ─────────────────────────────────────────────────────────────
-function LibraryView({ bookmarks, setBookmarks, aiStatus, isDemo, onImport, onClearAll }) {
+function LibraryView({ bookmarks, setBookmarks, aiStatus, isDemo, onImport, onClearAll, onExitDemo }) {
   const [search, setSearch] = useState("");
   const [selectedTopic, setSelectedTopic] = useState(null);
   const [selectedMonth, setSelectedMonth] = useState(null);
@@ -487,9 +487,13 @@ function LibraryView({ bookmarks, setBookmarks, aiStatus, isDemo, onImport, onCl
         <div style={{ maxWidth: "860px", margin: "0 auto" }}>
           <div style={{ display: "flex", alignItems: "flex-end", justifyContent: "space-between", marginBottom: "18px" }}>
             <div>
-              {isDemo && <div style={{ fontSize: "9px", letterSpacing: "0.1em", textTransform: "uppercase", color: "#c8b89a", fontFamily: "'DM Mono',monospace", marginBottom: "3px", opacity: 0.6 }}>demo mode</div>}
-              <div style={{ fontSize: "10px", letterSpacing: "0.14em", textTransform: "uppercase", color: "#6b6560", fontFamily: "'DM Mono',monospace", marginBottom: "4px" }}>your library</div>
+              <div style={{ fontSize: "10px", letterSpacing: "0.14em", textTransform: "uppercase", color: "#6b6560", fontFamily: "'DM Mono',monospace", marginBottom: "4px" }}>{isDemo ? "demo library" : "your library"}</div>
               <h1 style={{ margin: 0, fontSize: "28px", fontWeight: 300, letterSpacing: "-0.03em", color: "#f0ece4" }}>remember<span style={{ color: "#c8b89a" }}>.</span></h1>
+              {isDemo && (
+                <button onClick={onExitDemo} style={{ marginTop: "6px", background: "rgba(200,184,154,0.1)", border: "1px solid rgba(200,184,154,0.25)", borderRadius: "20px", padding: "2px 10px", color: "#c8b89a", fontSize: "9px", fontFamily: "'DM Mono',monospace", fontWeight: 600, letterSpacing: "0.07em", textTransform: "uppercase", cursor: "pointer" }}>
+                  ← back to my library
+                </button>
+              )}
             </div>
 
             <div style={{ display: "flex", flexDirection: "column", alignItems: "flex-end", gap: "5px" }}>
@@ -509,17 +513,21 @@ function LibraryView({ bookmarks, setBookmarks, aiStatus, isDemo, onImport, onCl
               </div>
 
               <div style={{ display: "flex", gap: "6px" }}>
-                <button onClick={() => setShowAdd(true)}
-                  style={{ padding: "2px 10px", borderRadius: "20px", cursor: "pointer", fontSize: "9px", fontFamily: "'DM Mono',monospace", fontWeight: 600, letterSpacing: "0.07em", textTransform: "uppercase", background: "rgba(200,184,154,0.1)", border: "1px solid rgba(200,184,154,0.25)", color: "#c8b89a", transition: "all 0.15s ease" }}
-                  onMouseEnter={e => { e.currentTarget.style.background = "rgba(200,184,154,0.18)"; }}
-                  onMouseLeave={e => { e.currentTarget.style.background = "rgba(200,184,154,0.1)"; }}
-                >+ add tweet</button>
-                <button onClick={onImport}
-                  style={{ padding: "2px 8px", borderRadius: "20px", cursor: "pointer", fontSize: "9px", fontFamily: "'DM Mono',monospace", fontWeight: 600, letterSpacing: "0.07em", textTransform: "uppercase", background: "transparent", border: "1px solid rgba(255,255,255,0.07)", color: "#6b6560", transition: "all 0.15s ease" }}
-                  onMouseEnter={e => { e.currentTarget.style.color = "#c8b89a"; e.currentTarget.style.borderColor = "rgba(200,184,154,0.25)"; }}
-                  onMouseLeave={e => { e.currentTarget.style.color = "#6b6560"; e.currentTarget.style.borderColor = "rgba(255,255,255,0.07)"; }}
-                >import</button>
-                {bookmarks.length > 0 && (
+                {!isDemo && (
+                  <button onClick={() => setShowAdd(true)}
+                    style={{ padding: "2px 10px", borderRadius: "20px", cursor: "pointer", fontSize: "9px", fontFamily: "'DM Mono',monospace", fontWeight: 600, letterSpacing: "0.07em", textTransform: "uppercase", background: "rgba(200,184,154,0.1)", border: "1px solid rgba(200,184,154,0.25)", color: "#c8b89a", transition: "all 0.15s ease" }}
+                    onMouseEnter={e => { e.currentTarget.style.background = "rgba(200,184,154,0.18)"; }}
+                    onMouseLeave={e => { e.currentTarget.style.background = "rgba(200,184,154,0.1)"; }}
+                  >+ add tweet</button>
+                )}
+                {!isDemo && (
+                  <button onClick={onImport}
+                    style={{ padding: "2px 8px", borderRadius: "20px", cursor: "pointer", fontSize: "9px", fontFamily: "'DM Mono',monospace", fontWeight: 600, letterSpacing: "0.07em", textTransform: "uppercase", background: "transparent", border: "1px solid rgba(255,255,255,0.07)", color: "#6b6560", transition: "all 0.15s ease" }}
+                    onMouseEnter={e => { e.currentTarget.style.color = "#c8b89a"; e.currentTarget.style.borderColor = "rgba(200,184,154,0.25)"; }}
+                    onMouseLeave={e => { e.currentTarget.style.color = "#6b6560"; e.currentTarget.style.borderColor = "rgba(255,255,255,0.07)"; }}
+                  >import</button>
+                )}
+                {!isDemo && bookmarks.length > 0 && (
                   <button onClick={onClearAll}
                     style={{ padding: "2px 8px", borderRadius: "20px", cursor: "pointer", fontSize: "9px", fontFamily: "'DM Mono',monospace", fontWeight: 600, letterSpacing: "0.07em", textTransform: "uppercase", background: "transparent", border: "1px solid rgba(255,255,255,0.07)", color: "#6b6560", transition: "all 0.15s ease" }}
                     onMouseEnter={e => { e.currentTarget.style.color = "#fc8181"; e.currentTarget.style.borderColor = "rgba(252,129,129,0.25)"; }}
@@ -626,47 +634,74 @@ const STORAGE_KEY = "remember_bookmarks";
 
 export default function App() {
   const [screen, setScreen] = useState("library");
-  const [bookmarks, setBookmarks] = useState(() => {
+  const [isDemo, setIsDemo] = useState(false);
+  const [aiStatus, setAiStatus] = useState("done");
+
+  // Personal bookmarks — persisted to localStorage
+  const [myBookmarks, setMyBookmarks] = useState(() => {
     try {
       const saved = localStorage.getItem(STORAGE_KEY);
       return saved ? JSON.parse(saved) : [];
     } catch { return []; }
   });
-  const [aiStatus, setAiStatus] = useState("done");
-  const [isDemo, setIsDemo] = useState(false);
 
-  // Persist bookmarks to localStorage whenever they change
+  // Demo bookmarks — never persisted, separate state
+  const [demoBookmarks, setDemoBookmarks] = useState([]);
+
+  // Active bookmarks depending on mode
+  const bookmarks = isDemo ? demoBookmarks : myBookmarks;
+  const setBookmarks = isDemo ? setDemoBookmarks : setMyBookmarks;
+
+  // Persist personal bookmarks whenever they change
   useEffect(() => {
-    try {
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(bookmarks));
-    } catch {}
-  }, [bookmarks]);
+    if (!isDemo) {
+      try { localStorage.setItem(STORAGE_KEY, JSON.stringify(myBookmarks)); } catch {}
+    }
+  }, [myBookmarks, isDemo]);
 
   const runClassification = useCallback(async (raw, demo) => {
     setAiStatus("loading");
-    setBookmarks(raw.map(b => ({ ...b, topic: "…", summary: null })));
+    const setter = demo ? setDemoBookmarks : setMyBookmarks;
+    setter(raw.map(b => ({ ...b, topic: "…", summary: null })));
+    setIsDemo(demo);
     setScreen("library");
     try {
       const results = await classifyWithAI(raw, demo);
       const lookup = {};
       results.forEach(r => { lookup[r.id] = r; });
       const classified = raw.map(b => ({ ...b, topic: lookup[b.id]?.topic || "Other", summary: lookup[b.id]?.summary || null, actions: lookup[b.id]?.actions || [], execute: lookup[b.id]?.execute || null }));
-      setBookmarks(classified);
+      setter(classified);
       setAiStatus("done");
     } catch {
-      setBookmarks(raw.map(b => ({ ...b, topic: "Other", summary: null })));
+      setter(raw.map(b => ({ ...b, topic: "Other", summary: null })));
       setAiStatus("done");
     }
   }, []);
 
-  const handleImport = raw => { setIsDemo(false); runClassification(raw, false); };
-  const handleDemo = () => { setIsDemo(true); runClassification(DEMO_BOOKMARKS, true); };
-  const handleClearAll = () => {
-    setBookmarks([]);
+  const handleImport = raw => runClassification(raw, false);
+  const handleDemo = () => runClassification(DEMO_BOOKMARKS, true);
+
+  const handleExitDemo = () => {
     setIsDemo(false);
+    setDemoBookmarks([]);
+    setScreen("library");
+  };
+
+  const handleClearAll = () => {
+    setMyBookmarks([]);
     try { localStorage.removeItem(STORAGE_KEY); } catch {}
   };
 
   if (screen === "import") return <ImportScreen onImport={handleImport} onDemo={handleDemo} onClose={() => setScreen("library")} />;
-  return <LibraryView bookmarks={bookmarks} setBookmarks={setBookmarks} aiStatus={aiStatus} isDemo={isDemo} onImport={() => setScreen("import")} onClearAll={handleClearAll} />;
+  return (
+    <LibraryView
+      bookmarks={bookmarks}
+      setBookmarks={setBookmarks}
+      aiStatus={aiStatus}
+      isDemo={isDemo}
+      onImport={() => setScreen("import")}
+      onClearAll={handleClearAll}
+      onExitDemo={handleExitDemo}
+    />
+  );
 }
