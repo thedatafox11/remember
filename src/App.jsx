@@ -104,7 +104,7 @@ const formatDate = d => new Date(d).toLocaleDateString("en-GB", { day: "numeric"
 const getMonthLabel = d => { const dt = new Date(d); return `${MONTHS[dt.getMonth()]} ${dt.getFullYear()}`; };
 
 // ─── Import screen ────────────────────────────────────────────────────────────
-function ImportScreen({ onImport, onDemo, onStartEmpty }) {
+function ImportScreen({ onImport, onDemo, onClose }) {
   const [dragging, setDragging] = useState(false);
   const [error, setError] = useState(null);
   const [showFileInstructions, setShowFileInstructions] = useState(false);
@@ -135,6 +135,11 @@ function ImportScreen({ onImport, onDemo, onStartEmpty }) {
       <div style={{ maxWidth: "460px", width: "100%", animation: "fadeUp 0.5s ease forwards" }}>
 
         {/* Logo */}
+        {/* Back link */}
+        <button onClick={onClose} style={{ background: "none", border: "none", color: "#6b6560", fontSize: "12px", fontFamily: "'DM Mono',monospace", cursor: "pointer", padding: "0 0 32px", letterSpacing: "0.04em", display: "block" }}>
+          ← back to library
+        </button>
+
         <div style={{ marginBottom: "40px" }}>
           <div style={{ fontSize: "10px", letterSpacing: "0.14em", textTransform: "uppercase", color: "#6b6560", fontFamily: "'DM Mono', monospace", marginBottom: "6px" }}>welcome to</div>
           <h1 style={{ margin: "0 0 10px", fontSize: "44px", fontWeight: 300, letterSpacing: "-0.03em", color: "#f0ece4" }}>
@@ -144,15 +149,6 @@ function ImportScreen({ onImport, onDemo, onStartEmpty }) {
             Save tweets. Get clarity. Take action.
           </p>
         </div>
-
-        {/* Primary CTA — start adding tweets */}
-        <button onClick={onStartEmpty}
-          style={{ width: "100%", padding: "16px", borderRadius: "14px", background: "rgba(200,184,154,0.12)", border: "1px solid rgba(200,184,154,0.3)", color: "#c8b89a", fontSize: "14px", fontFamily: "'DM Sans', sans-serif", fontWeight: 500, cursor: "pointer", marginBottom: "10px", transition: "all 0.2s ease" }}
-          onMouseEnter={e => { e.currentTarget.style.background = "rgba(200,184,154,0.18)"; }}
-          onMouseLeave={e => { e.currentTarget.style.background = "rgba(200,184,154,0.12)"; }}
-        >
-          + Start adding tweets
-        </button>
 
         <div style={{ display: "flex", alignItems: "center", gap: "12px", margin: "18px 0" }}>
           <div style={{ flex: 1, height: "1px", background: "rgba(255,255,255,0.05)" }} />
@@ -429,7 +425,7 @@ ID ${raw[0].id} (@${raw[0].handle}): ${raw[0].text}`;
 }
 
 // ─── Library view ─────────────────────────────────────────────────────────────
-function LibraryView({ bookmarks, setBookmarks, aiStatus, isDemo, onReset }) {
+function LibraryView({ bookmarks, setBookmarks, aiStatus, isDemo, onImport, onClearAll }) {
   const [search, setSearch] = useState("");
   const [selectedTopic, setSelectedTopic] = useState(null);
   const [selectedMonth, setSelectedMonth] = useState(null);
@@ -518,11 +514,18 @@ function LibraryView({ bookmarks, setBookmarks, aiStatus, isDemo, onReset }) {
                   onMouseEnter={e => { e.currentTarget.style.background = "rgba(200,184,154,0.18)"; }}
                   onMouseLeave={e => { e.currentTarget.style.background = "rgba(200,184,154,0.1)"; }}
                 >+ add tweet</button>
-                <button onClick={onReset}
+                <button onClick={onImport}
                   style={{ padding: "2px 8px", borderRadius: "20px", cursor: "pointer", fontSize: "9px", fontFamily: "'DM Mono',monospace", fontWeight: 600, letterSpacing: "0.07em", textTransform: "uppercase", background: "transparent", border: "1px solid rgba(255,255,255,0.07)", color: "#6b6560", transition: "all 0.15s ease" }}
                   onMouseEnter={e => { e.currentTarget.style.color = "#c8b89a"; e.currentTarget.style.borderColor = "rgba(200,184,154,0.25)"; }}
                   onMouseLeave={e => { e.currentTarget.style.color = "#6b6560"; e.currentTarget.style.borderColor = "rgba(255,255,255,0.07)"; }}
-                >{isDemo ? "import my bookmarks" : "reimport"}</button>
+                >import</button>
+                {bookmarks.length > 0 && (
+                  <button onClick={onClearAll}
+                    style={{ padding: "2px 8px", borderRadius: "20px", cursor: "pointer", fontSize: "9px", fontFamily: "'DM Mono',monospace", fontWeight: 600, letterSpacing: "0.07em", textTransform: "uppercase", background: "transparent", border: "1px solid rgba(255,255,255,0.07)", color: "#6b6560", transition: "all 0.15s ease" }}
+                    onMouseEnter={e => { e.currentTarget.style.color = "#fc8181"; e.currentTarget.style.borderColor = "rgba(252,129,129,0.25)"; }}
+                    onMouseLeave={e => { e.currentTarget.style.color = "#6b6560"; e.currentTarget.style.borderColor = "rgba(255,255,255,0.07)"; }}
+                  >clear all</button>
+                )}
               </div>
             </div>
           </div>
@@ -569,8 +572,39 @@ function LibraryView({ bookmarks, setBookmarks, aiStatus, isDemo, onReset }) {
 
       {/* Feed */}
       <div style={{ maxWidth: "860px", margin: "0 auto", padding: "8px 40px 80px", opacity: mounted ? 1 : 0, transition: "opacity 0.5s ease 0.1s" }}>
-        {filtered.length === 0 ? (
-          <div style={{ textAlign: "center", padding: "100px 0", color: "#6b6560", fontFamily: "'DM Mono',monospace", fontSize: "12px", letterSpacing: "0.06em" }}>no bookmarks found</div>
+        {filtered.length === 0 && bookmarks.length === 0 ? (
+          <div style={{ display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", padding: "80px 24px", textAlign: "center" }}>
+            <div style={{ fontSize: "36px", marginBottom: "20px", opacity: 0.3 }}>🔖</div>
+            <div style={{ fontSize: "20px", fontWeight: 300, color: "#f0ece4", letterSpacing: "-0.02em", marginBottom: "8px" }}>Your library is empty</div>
+            <p style={{ fontSize: "14px", color: "#7a7570", lineHeight: "1.6", maxWidth: "320px", marginBottom: "32px", fontFamily: "'Lora',serif" }}>
+              Add a tweet you've saved and AI will organise it, summarise it, and suggest what to do with it.
+            </p>
+            <button onClick={() => setShowAdd(true)} style={{
+              padding: "14px 28px", borderRadius: "14px", cursor: "pointer",
+              background: "rgba(200,184,154,0.12)", border: "1px solid rgba(200,184,154,0.3)",
+              color: "#c8b89a", fontSize: "14px", fontFamily: "'DM Sans',sans-serif",
+              fontWeight: 500, transition: "all 0.2s ease",
+            }}
+              onMouseEnter={e => e.currentTarget.style.background = "rgba(200,184,154,0.2)"}
+              onMouseLeave={e => e.currentTarget.style.background = "rgba(200,184,154,0.12)"}
+            >+ Add your first tweet</button>
+            <div style={{ marginTop: "20px", display: "flex", gap: "8px", alignItems: "center" }}>
+              <div style={{ height: "1px", width: "60px", background: "rgba(255,255,255,0.05)" }} />
+              <span style={{ fontSize: "10px", color: "#4a4540", fontFamily: "'DM Mono',monospace" }}>or</span>
+              <div style={{ height: "1px", width: "60px", background: "rgba(255,255,255,0.05)" }} />
+            </div>
+            <button onClick={onImport} style={{
+              marginTop: "16px", padding: "10px 20px", borderRadius: "12px", cursor: "pointer",
+              background: "transparent", border: "1px solid rgba(255,255,255,0.08)",
+              color: "#6b6560", fontSize: "13px", fontFamily: "'DM Sans',sans-serif",
+              transition: "all 0.2s ease",
+            }}
+              onMouseEnter={e => { e.currentTarget.style.color = "#a09890"; e.currentTarget.style.borderColor = "rgba(255,255,255,0.14)"; }}
+              onMouseLeave={e => { e.currentTarget.style.color = "#6b6560"; e.currentTarget.style.borderColor = "rgba(255,255,255,0.08)"; }}
+            >Import from X archive</button>
+          </div>
+        ) : filtered.length === 0 ? (
+          <div style={{ textAlign: "center", padding: "100px 0", color: "#6b6560", fontFamily: "'DM Mono',monospace", fontSize: "12px", letterSpacing: "0.06em" }}>no bookmarks match your filters</div>
         ) : (
           <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(360px, 1fr))", gap: "10px", alignItems: "start" }}>
             {grouped.map(item => {
@@ -588,11 +622,25 @@ function LibraryView({ bookmarks, setBookmarks, aiStatus, isDemo, onReset }) {
 }
 
 // ─── Root ─────────────────────────────────────────────────────────────────────
+const STORAGE_KEY = "remember_bookmarks";
+
 export default function App() {
-  const [screen, setScreen] = useState("import");
-  const [bookmarks, setBookmarks] = useState([]);
-  const [aiStatus, setAiStatus] = useState("idle");
+  const [screen, setScreen] = useState("library");
+  const [bookmarks, setBookmarks] = useState(() => {
+    try {
+      const saved = localStorage.getItem(STORAGE_KEY);
+      return saved ? JSON.parse(saved) : [];
+    } catch { return []; }
+  });
+  const [aiStatus, setAiStatus] = useState("done");
   const [isDemo, setIsDemo] = useState(false);
+
+  // Persist bookmarks to localStorage whenever they change
+  useEffect(() => {
+    try {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(bookmarks));
+    } catch {}
+  }, [bookmarks]);
 
   const runClassification = useCallback(async (raw, demo) => {
     setAiStatus("loading");
@@ -602,7 +650,8 @@ export default function App() {
       const results = await classifyWithAI(raw, demo);
       const lookup = {};
       results.forEach(r => { lookup[r.id] = r; });
-      setBookmarks(raw.map(b => ({ ...b, topic: lookup[b.id]?.topic || "Other", summary: lookup[b.id]?.summary || null, actions: lookup[b.id]?.actions || [], execute: lookup[b.id]?.execute || null })));
+      const classified = raw.map(b => ({ ...b, topic: lookup[b.id]?.topic || "Other", summary: lookup[b.id]?.summary || null, actions: lookup[b.id]?.actions || [], execute: lookup[b.id]?.execute || null }));
+      setBookmarks(classified);
       setAiStatus("done");
     } catch {
       setBookmarks(raw.map(b => ({ ...b, topic: "Other", summary: null })));
@@ -612,9 +661,12 @@ export default function App() {
 
   const handleImport = raw => { setIsDemo(false); runClassification(raw, false); };
   const handleDemo = () => { setIsDemo(true); runClassification(DEMO_BOOKMARKS, true); };
-  const handleStartEmpty = () => { setIsDemo(false); setBookmarks([]); setAiStatus("done"); setScreen("library"); };
-  const handleReset = () => { setScreen("import"); setBookmarks([]); setAiStatus("idle"); setIsDemo(false); };
+  const handleClearAll = () => {
+    setBookmarks([]);
+    setIsDemo(false);
+    try { localStorage.removeItem(STORAGE_KEY); } catch {}
+  };
 
-  if (screen === "import") return <ImportScreen onImport={handleImport} onDemo={handleDemo} onStartEmpty={handleStartEmpty} />;
-  return <LibraryView bookmarks={bookmarks} setBookmarks={setBookmarks} aiStatus={aiStatus} isDemo={isDemo} onReset={handleReset} />;
+  if (screen === "import") return <ImportScreen onImport={handleImport} onDemo={handleDemo} onClose={() => setScreen("library")} />;
+  return <LibraryView bookmarks={bookmarks} setBookmarks={setBookmarks} aiStatus={aiStatus} isDemo={isDemo} onImport={() => setScreen("import")} onClearAll={handleClearAll} />;
 }
