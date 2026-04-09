@@ -225,9 +225,62 @@ function ImportScreen({ onImport, onDemo, onClose }) {
 }
 
 // ─── Bookmark card ────────────────────────────────────────────────────────────
+function ClaudePromptModal({ prompt, onClose }) {
+  const [copied, setCopied] = useState(false);
+  const handleCopy = () => {
+    navigator.clipboard.writeText(prompt);
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2000);
+  };
+  // Format the prompt for display — replace \n with actual line breaks
+  const formatted = prompt.replace(/\\n/g, '\n');
+  return (
+    <div style={{ position: "fixed", inset: 0, background: "rgba(0,0,0,0.75)", zIndex: 100, display: "flex", alignItems: "center", justifyContent: "center", padding: "24px" }}
+      onClick={e => { if (e.target === e.currentTarget) onClose(); }}>
+      <div style={{ background: "#141210", border: "1px solid rgba(255,255,255,0.08)", borderRadius: "18px", padding: "28px", width: "100%", maxWidth: "560px", display: "flex", flexDirection: "column", gap: "16px", maxHeight: "80vh", overflow: "hidden" }}>
+        <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+          <div>
+            <div style={{ fontSize: "10px", color: "#7a7570", fontFamily: "'DM Mono',monospace", letterSpacing: "0.1em", textTransform: "uppercase", marginBottom: "3px" }}>Ready to use</div>
+            <div style={{ fontSize: "16px", fontWeight: 500, color: "#f0ece4" }}>Your Claude prompt</div>
+          </div>
+          <button onClick={onClose} style={{ background: "none", border: "none", color: "#7a7570", cursor: "pointer", fontSize: "20px" }}>×</button>
+        </div>
+        <div style={{ background: "rgba(255,255,255,0.03)", border: "1px solid rgba(255,255,255,0.07)", borderRadius: "12px", padding: "16px", overflowY: "auto", flex: 1 }}>
+          <pre style={{ margin: 0, fontSize: "13px", color: "#c8c0b8", lineHeight: "1.7", fontFamily: "'DM Sans',sans-serif", whiteSpace: "pre-wrap", wordBreak: "break-word" }}>{formatted}</pre>
+        </div>
+        <div style={{ display: "flex", gap: "8px" }}>
+          <button onClick={handleCopy} style={{
+            flex: 1, padding: "11px", borderRadius: "10px", cursor: "pointer",
+            background: copied ? "rgba(154,230,180,0.1)" : "rgba(255,255,255,0.04)",
+            border: copied ? "1px solid rgba(154,230,180,0.25)" : "1px solid rgba(255,255,255,0.08)",
+            color: copied ? "#9ae6b4" : "#a09890", fontSize: "13px", fontFamily: "'DM Sans',sans-serif",
+            transition: "all 0.2s ease",
+          }}>
+            {copied ? "✓ Copied" : "Copy prompt"}
+          </button>
+          <a href="https://claude.ai/new" target="_blank" rel="noopener noreferrer" style={{
+            flex: 1, padding: "11px", borderRadius: "10px", cursor: "pointer",
+            background: "rgba(99,179,237,0.1)", border: "1px solid rgba(99,179,237,0.25)",
+            color: "#63b3ed", fontSize: "13px", fontFamily: "'DM Sans',sans-serif",
+            textDecoration: "none", display: "flex", alignItems: "center", justifyContent: "center", gap: "6px",
+            fontWeight: 500,
+          }} onClick={handleCopy}>
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M4.304 15.978c.142.355.296.694.462 1.015l-1.6 4.8a.667.667 0 0 0 .84.84l4.8-1.6c.321.166.66.32 1.015.462L12 24l2.179-2.505c.355-.142.694-.296 1.015-.462l4.8 1.6a.667.667 0 0 0 .84-.84l-1.6-4.8c.166-.321.32-.66.462-1.015L24 12l-2.504-2.178a13.17 13.17 0 0 0-.462-1.015l1.6-4.8a.667.667 0 0 0-.84-.84l-4.8 1.6a13.17 13.17 0 0 0-1.015-.463L12 0 9.821 2.504c-.355.142-.694.297-1.015.463l-4.8-1.6a.667.667 0 0 0-.84.84l1.6 4.8A13.17 13.17 0 0 0 4.304 8.02L1.8 10.197 0 12l2.504 2.178c.142.321.296.66.462.978z"/></svg>
+            Copy & open Claude
+          </a>
+        </div>
+        <p style={{ margin: 0, fontSize: "11px", color: "#4a4540", fontFamily: "'DM Mono',monospace", textAlign: "center", lineHeight: "1.5" }}>
+          Prompt is copied to clipboard — paste it into Claude with ⌘V
+        </p>
+      </div>
+    </div>
+  );
+}
+
 function BookmarkCard({ bookmark, index }) {
   const [visible, setVisible] = useState(false);
   const [expanded, setExpanded] = useState(false);
+  const [showClaudePrompt, setShowClaudePrompt] = useState(false);
   const c = TOPIC_COLORS[bookmark.topic] || TOPIC_COLORS["Other"];
   const TRUNCATE_LENGTH = 180;
   const isLong = bookmark.text.length > TRUNCATE_LENGTH;
@@ -240,6 +293,9 @@ function BookmarkCard({ bookmark, index }) {
       opacity: visible ? 1 : 0, transform: visible ? "translateY(0)" : "translateY(14px)",
       transition: "opacity 0.35s ease, transform 0.35s ease",
     }}>
+      {showClaudePrompt && bookmark.claudePrompt && (
+        <ClaudePromptModal prompt={bookmark.claudePrompt} onClose={() => setShowClaudePrompt(false)} />
+      )}
       <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
         <div style={{ width: 34, height: 34, borderRadius: "50%", background: `linear-gradient(135deg,${c.dot}40,${c.dot}15)`, border: `1px solid ${c.dot}40`, display: "flex", alignItems: "center", justifyContent: "center", fontSize: "10px", fontWeight: 700, color: c.dot, fontFamily: "'DM Mono',monospace", flexShrink: 0 }}>
           {bookmark.avatar}
@@ -296,11 +352,11 @@ function BookmarkCard({ bookmark, index }) {
 
           {/* Claude button */}
           {(bookmark.execute === "build" || bookmark.execute === "reflect") && (
-            <a href={`https://claude.ai/new?q=${encodeURIComponent(bookmark.claudePrompt || `I want to act on this idea: ${bookmark.text}\n\nKey insight: ${bookmark.summary}\n\nHelp me build a detailed action plan.`)}`} target="_blank" rel="noopener noreferrer"
-              style={{ fontSize: "9px", padding: "3px 8px", borderRadius: "20px", background: "rgba(99,179,237,0.1)", border: "1px solid rgba(99,179,237,0.25)", color: "#63b3ed", fontFamily: "'DM Mono',monospace", fontWeight: 600, letterSpacing: "0.06em", textTransform: "uppercase", textDecoration: "none", display: "flex", alignItems: "center", gap: "4px" }}>
+            <button onClick={() => setShowClaudePrompt(true)}
+              style={{ fontSize: "9px", padding: "3px 8px", borderRadius: "20px", background: "rgba(99,179,237,0.1)", border: "1px solid rgba(99,179,237,0.25)", color: "#63b3ed", fontFamily: "'DM Mono',monospace", fontWeight: 600, letterSpacing: "0.06em", textTransform: "uppercase", cursor: "pointer", display: "flex", alignItems: "center", gap: "4px" }}>
               <svg width="10" height="10" viewBox="0 0 24 24" fill="currentColor"><path d="M4.304 15.978c.142.355.296.694.462 1.015l-1.6 4.8a.667.667 0 0 0 .84.84l4.8-1.6c.321.166.66.32 1.015.462L12 24l2.179-2.505c.355-.142.694-.296 1.015-.462l4.8 1.6a.667.667 0 0 0 .84-.84l-1.6-4.8c.166-.321.32-.66.462-1.015L24 12l-2.504-2.178a13.17 13.17 0 0 0-.462-1.015l1.6-4.8a.667.667 0 0 0-.84-.84l-4.8 1.6a13.17 13.17 0 0 0-1.015-.463L12 0 9.821 2.504c-.355.142-.694.297-1.015.463l-4.8-1.6a.667.667 0 0 0-.84.84l1.6 4.8A13.17 13.17 0 0 0 4.304 8.02L1.8 10.197 0 12l2.504 2.178c.142.321.296.66.462.978z"/></svg>
               Claude
-            </a>
+            </button>
           )}
 
           {/* Notion button */}
