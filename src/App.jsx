@@ -73,7 +73,7 @@ async function classifyWithAI(bookmarks, isDemo) {
 RULES:
 - Every action must reference SPECIFIC details — names, numbers, prices, platforms, tools from the tweet
 - Never write generic advice — always tie to what's actually in the tweet
-- claudePrompt must be a specific, immediately usable prompt someone can send to Claude to go deeper
+- claudePrompt must be structured with clear sections (Context / What I want to do / Key details / Help me with) using line breaks — never a block of text
 
 Choose topic from: AI & Tech, Startups, Life & Mindset, Productivity, Thinking & Ideas, Leadership, Design, Finance, Health, Other.
 Choose execute from: "build" (involves making/coding), "notion" (process/workflow/task), "reflect" (mindset/personal).
@@ -376,7 +376,7 @@ Analyse the tweet deeply and return a JSON object with this exact structure:
     "<Step 4 — optional: only include if the tweet has enough depth to warrant it. Skip if not.>",
     "<Step 5 — optional: only include if the tweet has enough depth to warrant it. Skip if not.>"
   ],
-  "claudePrompt": "<A pre-written prompt the user can send to Claude to go deeper on this. Should be specific to the tweet content, frame the exact question or task, and set Claude up to give maximum value. Example format: 'I want to apply the TikTok lazymaxxing strategy described here: [tweet summary]. Help me build a step-by-step implementation plan for my app [they can fill this in]. Start with the app concept validation using the core human desire framework, then map out the exact TikTop Smart+ campaign structure at $50/day.'>"
+  "claudePrompt": "<A pre-written prompt the user can send to Claude. Format it with clear sections using line breaks — not a block of text. Structure it like this:\n\n**Context:**\n[What the tweet is about in 1-2 sentences]\n\n**What I want to do:**\n[The specific goal based on the tweet content]\n\n**Key details from the source:**\n- [Specific detail 1 from tweet]\n- [Specific detail 2 from tweet]\n- [Specific detail 3 from tweet]\n\n**Help me with:**\n[Specific ask — what Claude should actually do, referencing exact numbers/tools/methods from the tweet]>"
 }
 
 RULES:
