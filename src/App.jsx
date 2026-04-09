@@ -384,8 +384,8 @@ ID ${raw[0].id} (@${raw[0].handle}): ${raw[0].text}`;
       });
       const data = await res.json();
       const resText = data.content.map(i => i.text || "").join("").replace(/```json|```/g, "").trim();
-      const results = JSON.parse(resText);
-      const r = results[0];
+      const parsed = JSON.parse(resText);
+      const r = Array.isArray(parsed) ? parsed[0] : parsed;
       onAdd({ ...raw[0], topic: r?.topic || "Other", summary: r?.summary || null, actions: r?.actions || [], execute: r?.execute || null, claudePrompt: r?.claudePrompt || null });
     } catch {
       onAdd({ ...raw[0], topic: "Other", summary: null, actions: [], execute: null });
