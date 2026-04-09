@@ -84,7 +84,7 @@ ${bookmarks.slice(0, 80).map(b => `ID ${b.id} (@${b.handle}): ${b.text.slice(0, 
   const res = await fetch("/api/classify", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ model: "claude-sonnet-4-20250514", max_tokens: 2000, messages: [{ role: "user", content: prompt }] }),
+    body: JSON.stringify({ model: "claude-sonnet-4-20250514", max_tokens: 4000, messages: [{ role: "user", content: prompt }] }),
   });
   const data = await res.json();
   const text = data.content.map(i => i.text || "").join("").replace(/```json|```/g, "").trim();
@@ -380,7 +380,7 @@ ID ${raw[0].id} (@${raw[0].handle}): ${raw[0].text}`;
       const res = await fetch("/api/classify", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ model: "claude-sonnet-4-20250514", max_tokens: 500, messages: [{ role: "user", content: prompt }] }),
+        body: JSON.stringify({ model: "claude-sonnet-4-20250514", max_tokens: 4000, messages: [{ role: "user", content: prompt }] }),
       });
       const data = await res.json();
       const resText = data.content.map(i => i.text || "").join("").replace(/```json|```/g, "").trim();
