@@ -68,12 +68,19 @@ async function classifyWithAI(bookmarks, isDemo) {
     await new Promise(res => setTimeout(res, 1800));
     return DEMO_CLASSIFIED;
   }
-  const prompt = `You are a bookmark organiser and action coach. For each tweet: classify it, summarise it, and generate 2 specific action steps.
+  const prompt = `You are a bookmark organiser and action coach. For each tweet: classify it, summarise it, and generate 2 hyper-specific action steps.
+
+CRITICAL RULES FOR ACTION STEPS:
+- Actions must reference SPECIFIC details from the tweet (numbers, tools, platforms, methods mentioned)
+- Actions must be immediately executable today — not vague research tasks  
+- If the tweet mentions a specific tool, price, platform or tactic — the action must reference it directly
+- Bad: "Research your niche" — Good: "Apply the exact $50/day TikTok Smart+ structure described"
+
 Choose topic from: AI & Tech, Startups, Life & Mindset, Productivity, Thinking & Ideas, Leadership, Design, Finance, Health, Other.
 Choose execute from: "build" (involves making/coding), "notion" (process/workflow/task), "reflect" (mindset/personal).
-Return ONLY a JSON array, no markdown. Each item: {"id": number, "topic": "string", "summary": "one short sentence", "actions": ["action 1", "action 2"], "execute": "build|notion|reflect"}.
+Return ONLY a JSON array, no markdown. Each item: {"id": number, "topic": "string", "summary": "one punchy sentence capturing the specific insight", "actions": ["specific action 1", "specific action 2"], "execute": "build|notion|reflect"}.
 Tweets:
-${bookmarks.slice(0, 80).map(b => `ID ${b.id} (@${b.handle}): ${b.text.slice(0, 200)}`).join("\n")}`;
+${bookmarks.slice(0, 80).map(b => `ID ${b.id} (@${b.handle}): ${b.text.slice(0, 500)}`).join("\n")}`;
 
   const res = await fetch("/api/classify", {
     method: "POST",
@@ -345,10 +352,19 @@ function AddTweetPanel({ onAdd, onClose }) {
     }];
 
     try {
-      const prompt = `You are a bookmark organiser and action coach. For this tweet: classify it, summarise it, and generate 2 specific action steps.
+      const prompt = `You are a bookmark organiser and action coach. For this tweet: classify it, summarise it, and generate 2 hyper-specific action steps.
+
+CRITICAL RULES FOR ACTION STEPS:
+- Actions must reference SPECIFIC details from the tweet (numbers, tools, platforms, methods mentioned)
+- Actions must be immediately executable today — not vague research tasks
+- Actions should feel like they were written by someone who read every word of the tweet
+- Bad example: "Research successful apps in your niche" 
+- Good example: "Set up a TikTok Smart+ campaign with $50/day targeting subscribe events — use the exact structure described"
+- If the tweet mentions a specific tool, price, platform or tactic — the action must reference it directly
+
 Choose topic from: AI & Tech, Startups, Life & Mindset, Productivity, Thinking & Ideas, Leadership, Design, Finance, Health, Other.
 Choose execute from: "build" (involves making/coding), "notion" (process/workflow/task), "reflect" (mindset/personal).
-Return ONLY a JSON array, no markdown. Each item: {"id": number, "topic": "string", "summary": "one short sentence", "actions": ["action 1", "action 2"], "execute": "build|notion|reflect"}.
+Return ONLY a JSON array, no markdown. Each item: {"id": number, "topic": "string", "summary": "one punchy sentence capturing the specific insight", "actions": ["specific action 1", "specific action 2"], "execute": "build|notion|reflect"}.
 Tweet:
 ID ${raw[0].id} (@${raw[0].handle}): ${raw[0].text}`;
 
