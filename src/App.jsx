@@ -617,4 +617,4 @@ export default function App() {
 
   if (screen === "import") return <ImportScreen onImport={handleImport} onDemo={handleDemo} onStartEmpty={handleStartEmpty} />;
   return <LibraryView bookmarks={bookmarks} setBookmarks={setBookmarks} aiStatus={aiStatus} isDemo={isDemo} onReset={handleReset} />;
-}
+}// updated Thu  9 Apr 2026 08:11:45 IST
