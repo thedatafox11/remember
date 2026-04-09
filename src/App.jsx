@@ -212,6 +212,30 @@ function ImportScreen({ onImport, onDemo, onClose }) {
           <div style={{ flex: 1, height: "1px", background: "rgba(255,255,255,0.04)" }} />
         </div>
 
+        {/* Bookmarklet */}
+        <div style={{ background: "rgba(255,255,255,0.02)", border: "1px solid rgba(255,255,255,0.05)", borderRadius: "12px", padding: "16px 18px", marginBottom: "16px" }}>
+          <div style={{ fontSize: "10px", color: "#7a7570", fontFamily: "'DM Mono', monospace", fontWeight: 600, letterSpacing: "0.08em", textTransform: "uppercase", marginBottom: "8px" }}>Save to Remember — browser shortcut</div>
+          <p style={{ margin: "0 0 12px", fontSize: "12px", color: "#8a8278", lineHeight: "1.55" }}>
+            Drag this button to your bookmarks bar. When you're on a tweet, click it to send it straight to Remember.
+          </p>
+          <a
+            href={`javascript:(function(){var u=window.location.href;var t=document.querySelector('[data-testid="tweetText"]');var text=t?t.innerText:'';window.open('https://remember-neon.vercel.app/?url='+encodeURIComponent(u)+'&text='+encodeURIComponent(text),'_blank');})();`}
+            style={{ display: "inline-block", padding: "8px 16px", borderRadius: "10px", background: "rgba(200,184,154,0.1)", border: "1px solid rgba(200,184,154,0.25)", color: "#c8b89a", fontSize: "12px", fontFamily: "'DM Mono', monospace", fontWeight: 600, textDecoration: "none", cursor: "grab" }}
+            onClick={e => { e.preventDefault(); alert("Drag this button to your bookmarks bar — don't click it here!"); }}
+          >
+            🔖 Save to Remember
+          </a>
+          <p style={{ margin: "10px 0 0", fontSize: "11px", color: "#4a4540", fontFamily: "'DM Mono', monospace" }}>
+            Drag ↑ to your bookmarks bar, then click it on any tweet
+          </p>
+        </div>
+
+        <div style={{ display: "flex", alignItems: "center", gap: "12px", marginBottom: "12px" }}>
+          <div style={{ flex: 1, height: "1px", background: "rgba(255,255,255,0.04)" }} />
+          <span style={{ fontSize: "10px", color: "#7a7570", fontFamily: "'DM Mono', monospace" }}>OR</span>
+          <div style={{ flex: 1, height: "1px", background: "rgba(255,255,255,0.04)" }} />
+        </div>
+
         <button onClick={onDemo}
           style={{ width: "100%", padding: "12px", borderRadius: "12px", background: "transparent", border: "1px solid rgba(255,255,255,0.1)", color: "#7a7570", fontSize: "13px", fontFamily: "'DM Sans', sans-serif", cursor: "pointer", transition: "all 0.2s ease" }}
           onMouseEnter={e => { e.currentTarget.style.color = "#c8c0b8"; e.currentTarget.style.borderColor = "rgba(255,255,255,0.18)"; }}
@@ -397,9 +421,9 @@ function MonthDivider({ label }) {
 }
 
 // ─── Add tweet panel ──────────────────────────────────────────────────────────
-function AddTweetPanel({ onAdd, onClose }) {
-  const [url, setUrl] = useState("");
-  const [text, setText] = useState("");
+function AddTweetPanel({ onAdd, onClose, prefillUrl = "", prefillText = "" }) {
+  const [url, setUrl] = useState(prefillUrl);
+  const [text, setText] = useState(prefillText);
   const [adding, setAdding] = useState(false);
   const [error, setError] = useState(null);
 
@@ -528,7 +552,7 @@ ID ${raw[0].id} (@${raw[0].handle}): ${raw[0].text}`;
 }
 
 // ─── Library view ─────────────────────────────────────────────────────────────
-function LibraryView({ bookmarks, setBookmarks, aiStatus, isDemo, onImport, onClearAll, onExitDemo }) {
+function LibraryView({ bookmarks, setBookmarks, aiStatus, isDemo, onImport, onClearAll, onExitDemo, prefill, onPrefillUsed }) {
   const [search, setSearch] = useState("");
   const [selectedTopic, setSelectedTopic] = useState(null);
   const [selectedMonth, setSelectedMonth] = useState(null);
@@ -536,6 +560,11 @@ function LibraryView({ bookmarks, setBookmarks, aiStatus, isDemo, onImport, onCl
   const [mounted, setMounted] = useState(false);
   const [showAdd, setShowAdd] = useState(false);
   useEffect(() => { const t = setTimeout(() => setMounted(true), 80); return () => clearTimeout(t); }, []);
+
+  // Auto-open add panel when bookmarklet prefill arrives
+  useEffect(() => {
+    if (prefill?.url || prefill?.text) setShowAdd(true);
+  }, [prefill]);
 
   const handleAdd = (bookmark) => {
     setBookmarks(prev => [bookmark, ...prev]);
@@ -581,7 +610,7 @@ function LibraryView({ bookmarks, setBookmarks, aiStatus, isDemo, onImport, onCl
         @keyframes spin { to{transform:rotate(360deg)} }
       `}</style>
 
-      {showAdd && <AddTweetPanel onAdd={handleAdd} onClose={() => setShowAdd(false)} />}
+      {showAdd && <AddTweetPanel onAdd={handleAdd} onClose={() => { setShowAdd(false); onPrefillUsed?.(); }} prefillUrl={prefill?.url} prefillText={prefill?.text} />}
 
       {/* Sticky header */}
       <div style={{
@@ -743,6 +772,7 @@ export default function App() {
   const [screen, setScreen] = useState("library");
   const [isDemo, setIsDemo] = useState(false);
   const [aiStatus, setAiStatus] = useState("done");
+  const [prefill, setPrefill] = useState({ url: "", text: "" });
 
   // Personal bookmarks — persisted to localStorage
   const [myBookmarks, setMyBookmarks] = useState(() => {
@@ -765,6 +795,17 @@ export default function App() {
       try { localStorage.setItem(STORAGE_KEY, JSON.stringify(myBookmarks)); } catch {}
     }
   }, [myBookmarks, isDemo]);
+
+  // Read URL params from bookmarklet — auto-open add panel with prefilled data
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const tweetUrl = params.get("url");
+    const tweetText = params.get("text");
+    if (tweetUrl || tweetText) {
+      setPrefill({ url: tweetUrl || "", text: tweetText || "" });
+      window.history.replaceState({}, "", window.location.pathname);
+    }
+  }, []);
 
   const runClassification = useCallback(async (raw, demo) => {
     setAiStatus("loading");
@@ -809,6 +850,8 @@ export default function App() {
       onImport={() => setScreen("import")}
       onClearAll={handleClearAll}
       onExitDemo={handleExitDemo}
+      prefill={prefill}
+      onPrefillUsed={() => setPrefill({ url: "", text: "" })}
     />
   );
 }
