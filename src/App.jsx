@@ -68,17 +68,16 @@ async function classifyWithAI(bookmarks, isDemo) {
     await new Promise(res => setTimeout(res, 1800));
     return DEMO_CLASSIFIED;
   }
-  const prompt = `You are a bookmark organiser and action coach. For each tweet: classify it, summarise it, and generate 2 hyper-specific action steps.
+  const prompt = `You are an expert at turning saved content into clear, valuable action plans. For each tweet below, produce hyper-specific action steps that reference exact details from the tweet.
 
-CRITICAL RULES FOR ACTION STEPS:
-- Actions must reference SPECIFIC details from the tweet (numbers, tools, platforms, methods mentioned)
-- Actions must be immediately executable today — not vague research tasks  
-- If the tweet mentions a specific tool, price, platform or tactic — the action must reference it directly
-- Bad: "Research your niche" — Good: "Apply the exact $50/day TikTok Smart+ structure described"
+RULES:
+- Every action must reference SPECIFIC details — names, numbers, prices, platforms, tools from the tweet
+- Never write generic advice — always tie to what's actually in the tweet
+- claudePrompt must be a specific, immediately usable prompt someone can send to Claude to go deeper
 
 Choose topic from: AI & Tech, Startups, Life & Mindset, Productivity, Thinking & Ideas, Leadership, Design, Finance, Health, Other.
 Choose execute from: "build" (involves making/coding), "notion" (process/workflow/task), "reflect" (mindset/personal).
-Return ONLY a JSON array, no markdown. Each item: {"id": number, "topic": "string", "summary": "one punchy sentence capturing the specific insight", "actions": ["specific action 1", "specific action 2"], "execute": "build|notion|reflect"}.
+Return ONLY a JSON array, no markdown. Each item: {"id": number, "topic": "string", "execute": "string", "summary": "one sharp specific sentence", "actions": ["step 1", "step 2", "step 3"], "claudePrompt": "pre-written prompt to go deeper with Claude"}.
 Tweets:
 ${bookmarks.slice(0, 80).map(b => `ID ${b.id} (@${b.handle}): ${b.text.slice(0, 500)}`).join("\n")}`;
 
@@ -285,9 +284,7 @@ function BookmarkCard({ bookmark, index }) {
 
           {/* Claude button */}
           {(bookmark.execute === "build" || bookmark.execute === "reflect") && (
-            <a href={`https://claude.ai/new?q=${encodeURIComponent(
-                `I saved this post by ${bookmark.author}:\n\n"${bookmark.text}"\n\nKey idea: ${bookmark.summary}\n\nMy action steps were:\n${(bookmark.actions||[]).map((a,i)=>`${i+1}. ${a}`).join('\n')}\n\nHelp me take action on this.`
-              )}`} target="_blank" rel="noopener noreferrer"
+            <a href={`https://claude.ai/new?q=${encodeURIComponent(bookmark.claudePrompt || `I want to act on this idea: ${bookmark.text}\n\nKey insight: ${bookmark.summary}\n\nHelp me build a detailed action plan.`)}`} target="_blank" rel="noopener noreferrer"
               style={{ fontSize: "9px", padding: "3px 8px", borderRadius: "20px", background: "rgba(99,179,237,0.1)", border: "1px solid rgba(99,179,237,0.25)", color: "#63b3ed", fontFamily: "'DM Mono',monospace", fontWeight: 600, letterSpacing: "0.06em", textTransform: "uppercase", textDecoration: "none", display: "flex", alignItems: "center", gap: "4px" }}>
               <svg width="10" height="10" viewBox="0 0 24 24" fill="currentColor"><path d="M4.304 15.978c.142.355.296.694.462 1.015l-1.6 4.8a.667.667 0 0 0 .84.84l4.8-1.6c.321.166.66.32 1.015.462L12 24l2.179-2.505c.355-.142.694-.296 1.015-.462l4.8 1.6a.667.667 0 0 0 .84-.84l-1.6-4.8c.166-.321.32-.66.462-1.015L24 12l-2.504-2.178a13.17 13.17 0 0 0-.462-1.015l1.6-4.8a.667.667 0 0 0-.84-.84l-4.8 1.6a13.17 13.17 0 0 0-1.015-.463L12 0 9.821 2.504c-.355.142-.694.297-1.015.463l-4.8-1.6a.667.667 0 0 0-.84.84l1.6 4.8A13.17 13.17 0 0 0 4.304 8.02L1.8 10.197 0 12l2.504 2.178c.142.321.296.66.462.978z"/></svg>
               Claude
@@ -352,19 +349,31 @@ function AddTweetPanel({ onAdd, onClose }) {
     }];
 
     try {
-      const prompt = `You are a bookmark organiser and action coach. For this tweet: classify it, summarise it, and generate 2 hyper-specific action steps.
+      const prompt = `You are an expert at turning saved content into clear, valuable action plans. Someone has bookmarked this tweet because it contains information they want to act on. Your job is to make that as easy as possible.
 
-CRITICAL RULES FOR ACTION STEPS:
-- Actions must reference SPECIFIC details from the tweet (numbers, tools, platforms, methods mentioned)
-- Actions must be immediately executable today — not vague research tasks
-- Actions should feel like they were written by someone who read every word of the tweet
-- Bad example: "Research successful apps in your niche" 
-- Good example: "Set up a TikTok Smart+ campaign with $50/day targeting subscribe events — use the exact structure described"
-- If the tweet mentions a specific tool, price, platform or tactic — the action must reference it directly
+Analyse the tweet deeply and return a JSON object with this exact structure:
+{
+  "id": <number>,
+  "topic": <one of: "AI & Tech", "Startups", "Life & Mindset", "Productivity", "Thinking & Ideas", "Leadership", "Design", "Finance", "Health", "Other">,
+  "execute": <one of: "build", "notion", "reflect">,
+  "summary": "<One sharp sentence — the single most important insight from this tweet. Be specific, not generic. Reference actual details.>",
+  "actions": [
+    "<Step 1 — the most immediate thing to do today. Must reference specific details, numbers, tools or methods from the tweet.>",
+    "<Step 2 — the next concrete step. Again, hyper-specific to this tweet's content.>",
+    "<Step 3 — a slightly longer term action that builds on steps 1 and 2.>",
+    "<Step 4 — optional: only include if the tweet has enough depth to warrant it. Skip if not.>",
+    "<Step 5 — optional: only include if the tweet has enough depth to warrant it. Skip if not.>"
+  ],
+  "claudePrompt": "<A pre-written prompt the user can send to Claude to go deeper on this. Should be specific to the tweet content, frame the exact question or task, and set Claude up to give maximum value. Example format: 'I want to apply the TikTok lazymaxxing strategy described here: [tweet summary]. Help me build a step-by-step implementation plan for my app [they can fill this in]. Start with the app concept validation using the core human desire framework, then map out the exact TikTop Smart+ campaign structure at $50/day.'>"
+}
 
-Choose topic from: AI & Tech, Startups, Life & Mindset, Productivity, Thinking & Ideas, Leadership, Design, Finance, Health, Other.
-Choose execute from: "build" (involves making/coding), "notion" (process/workflow/task), "reflect" (mindset/personal).
-Return ONLY a JSON array, no markdown. Each item: {"id": number, "topic": "string", "summary": "one punchy sentence capturing the specific insight", "actions": ["specific action 1", "specific action 2"], "execute": "build|notion|reflect"}.
+RULES:
+- Every action step must reference SPECIFIC details from the tweet — names, numbers, prices, platforms, tools
+- Never write generic advice like "research your market" or "think about your goals"
+- The claudePrompt must be immediately usable — specific enough that clicking it opens a productive Claude conversation
+- Actions should be ordered: do today → do this week → do this month
+- Return ONLY the JSON array containing one object. No markdown, no explanation.
+
 Tweet:
 ID ${raw[0].id} (@${raw[0].handle}): ${raw[0].text}`;
 
@@ -377,7 +386,7 @@ ID ${raw[0].id} (@${raw[0].handle}): ${raw[0].text}`;
       const resText = data.content.map(i => i.text || "").join("").replace(/```json|```/g, "").trim();
       const results = JSON.parse(resText);
       const r = results[0];
-      onAdd({ ...raw[0], topic: r?.topic || "Other", summary: r?.summary || null, actions: r?.actions || [], execute: r?.execute || null });
+      onAdd({ ...raw[0], topic: r?.topic || "Other", summary: r?.summary || null, actions: r?.actions || [], execute: r?.execute || null, claudePrompt: r?.claudePrompt || null });
     } catch {
       onAdd({ ...raw[0], topic: "Other", summary: null, actions: [], execute: null });
     }
@@ -685,7 +694,7 @@ export default function App() {
       const results = await classifyWithAI(raw, demo);
       const lookup = {};
       results.forEach(r => { lookup[r.id] = r; });
-      const classified = raw.map(b => ({ ...b, topic: lookup[b.id]?.topic || "Other", summary: lookup[b.id]?.summary || null, actions: lookup[b.id]?.actions || [], execute: lookup[b.id]?.execute || null }));
+      const classified = raw.map(b => ({ ...b, topic: lookup[b.id]?.topic || "Other", summary: lookup[b.id]?.summary || null, actions: lookup[b.id]?.actions || [], execute: lookup[b.id]?.execute || null, claudePrompt: lookup[b.id]?.claudePrompt || null }));
       setter(classified);
       setAiStatus("done");
     } catch {
