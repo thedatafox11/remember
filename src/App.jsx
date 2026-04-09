@@ -216,17 +216,17 @@ function ImportScreen({ onImport, onDemo, onClose }) {
         <div style={{ background: "rgba(255,255,255,0.02)", border: "1px solid rgba(255,255,255,0.05)", borderRadius: "12px", padding: "16px 18px", marginBottom: "16px" }}>
           <div style={{ fontSize: "10px", color: "#7a7570", fontFamily: "'DM Mono', monospace", fontWeight: 600, letterSpacing: "0.08em", textTransform: "uppercase", marginBottom: "8px" }}>Save to Remember — browser shortcut</div>
           <p style={{ margin: "0 0 12px", fontSize: "12px", color: "#8a8278", lineHeight: "1.55" }}>
-            Drag this button to your bookmarks bar. When you're on a tweet, click it to send it straight to Remember.
+            Drag this button to your bookmarks bar. On X, <strong style={{ color: "#c8c0b8" }}>select the tweet text first</strong>, then click it — Remember opens with the text pre-filled.
           </p>
           <a
-            href={`javascript:(function(){var u=window.location.href;var selectors=['[data-testid="tweetText"]','article [lang]','[data-testid="tweet"] [lang]'];var text='';for(var i=0;i<selectors.length;i++){var els=document.querySelectorAll(selectors[i]);if(els.length){var arr=[];els.forEach(function(e){arr.push(e.innerText);});text=arr.join(' ');break;}}if(!text){text=prompt('Could not auto-grab tweet. Paste the tweet text:') || '';}if(text)window.open('https://remember-neon.vercel.app/?url='+encodeURIComponent(u)+'&text='+encodeURIComponent(text),'_blank');})();`}
+            href={`javascript:(function(){var u=window.location.href;var selected=window.getSelection?window.getSelection().toString():'';var text=selected;if(!text){var selectors=['[data-testid="tweetText"]','article [lang]'];for(var i=0;i<selectors.length;i++){var els=document.querySelectorAll(selectors[i]);if(els.length){var arr=[];els.forEach(function(e){arr.push(e.innerText);});text=arr[0]||'';break;}}}window.open('https://remember-neon.vercel.app/?url='+encodeURIComponent(u)+'&text='+encodeURIComponent(text),'_blank');})();`}
             style={{ display: "inline-block", padding: "8px 16px", borderRadius: "10px", background: "rgba(200,184,154,0.1)", border: "1px solid rgba(200,184,154,0.25)", color: "#c8b89a", fontSize: "12px", fontFamily: "'DM Mono', monospace", fontWeight: 600, textDecoration: "none", cursor: "grab" }}
             onClick={e => { e.preventDefault(); alert("Drag this button to your bookmarks bar — don't click it here!"); }}
           >
             🔖 Save to Remember
           </a>
           <p style={{ margin: "10px 0 0", fontSize: "11px", color: "#4a4540", fontFamily: "'DM Mono', monospace" }}>
-            Drag ↑ to your bookmarks bar, then click it on any tweet
+            1. Drag ↑ to bookmarks bar &nbsp;2. On X, select tweet text &nbsp;3. Click it
           </p>
         </div>
 
