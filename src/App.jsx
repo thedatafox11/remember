@@ -156,7 +156,7 @@ function ImportScreen({ onImport, onDemo, onStartEmpty }) {
 
         <div style={{ display: "flex", alignItems: "center", gap: "12px", margin: "18px 0" }}>
           <div style={{ flex: 1, height: "1px", background: "rgba(255,255,255,0.05)" }} />
-          <span style={{ fontSize: "10px", color: "#4a4540", fontFamily: "'DM Mono', monospace" }}>OR</span>
+          <span style={{ fontSize: "10px", color: "#7a7570", fontFamily: "'DM Mono', monospace" }}>OR</span>
           <div style={{ flex: 1, height: "1px", background: "rgba(255,255,255,0.05)" }} />
         </div>
 
@@ -178,7 +178,7 @@ function ImportScreen({ onImport, onDemo, onStartEmpty }) {
           <div style={{ fontSize: "13px", fontWeight: 500, color: "#a09890", marginBottom: "4px" }}>
             Import <code style={{ fontFamily: "'DM Mono', monospace", fontSize: "11px", color: "#c8b89a", background: "rgba(200,184,154,0.08)", padding: "1px 5px", borderRadius: "4px" }}>bookmarks.js</code> from X archive
           </div>
-          <div style={{ fontSize: "11px", color: "#4a4540", fontFamily: "'DM Mono', monospace" }}>drag & drop or click to browse</div>
+          <div style={{ fontSize: "11px", color: "#7a7570", fontFamily: "'DM Mono', monospace" }}>drag & drop or click to browse</div>
         </div>
 
         {error && (
@@ -189,7 +189,7 @@ function ImportScreen({ onImport, onDemo, onStartEmpty }) {
 
         {/* Collapsible instructions */}
         <button onClick={() => setShowFileInstructions(!showFileInstructions)}
-          style={{ background: "none", border: "none", color: "#4a4540", fontSize: "11px", fontFamily: "'DM Mono', monospace", cursor: "pointer", padding: "4px 0", letterSpacing: "0.04em", marginBottom: showFileInstructions ? "10px" : "18px" }}>
+          style={{ background: "none", border: "none", color: "#8a8278", fontSize: "11px", fontFamily: "'DM Mono', monospace", cursor: "pointer", padding: "4px 0", letterSpacing: "0.04em", marginBottom: showFileInstructions ? "10px" : "18px" }}>
           {showFileInstructions ? "▾ hide instructions" : "▸ how to get the file"}
         </button>
 
@@ -198,7 +198,7 @@ function ImportScreen({ onImport, onDemo, onStartEmpty }) {
             {["Go to X → Settings → Your Account", "Tap Download an archive of your data", "Wait for the download email (can take hours)", "Unzip it — find bookmarks.js inside", "Drop it above ↑"].map((s, i) => (
               <div key={i} style={{ display: "flex", gap: "10px", marginBottom: i < 4 ? "6px" : 0 }}>
                 <span style={{ fontSize: "10px", color: "#c8b89a", fontFamily: "'DM Mono', monospace", fontWeight: 600, flexShrink: 0, marginTop: "2px" }}>{i + 1}</span>
-                <span style={{ fontSize: "12px", color: "#7a7570", lineHeight: "1.5" }}>{s}</span>
+                <span style={{ fontSize: "12px", color: "#a09890", lineHeight: "1.5" }}>{s}</span>
               </div>
             ))}
           </div>
@@ -206,14 +206,14 @@ function ImportScreen({ onImport, onDemo, onStartEmpty }) {
 
         <div style={{ display: "flex", alignItems: "center", gap: "12px", marginBottom: "12px" }}>
           <div style={{ flex: 1, height: "1px", background: "rgba(255,255,255,0.04)" }} />
-          <span style={{ fontSize: "10px", color: "#4a4540", fontFamily: "'DM Mono', monospace" }}>OR</span>
+          <span style={{ fontSize: "10px", color: "#7a7570", fontFamily: "'DM Mono', monospace" }}>OR</span>
           <div style={{ flex: 1, height: "1px", background: "rgba(255,255,255,0.04)" }} />
         </div>
 
         <button onClick={onDemo}
-          style={{ width: "100%", padding: "12px", borderRadius: "12px", background: "transparent", border: "1px solid rgba(255,255,255,0.06)", color: "#4a4540", fontSize: "13px", fontFamily: "'DM Sans', sans-serif", cursor: "pointer", transition: "all 0.2s ease" }}
-          onMouseEnter={e => { e.currentTarget.style.color = "#8a8278"; e.currentTarget.style.borderColor = "rgba(255,255,255,0.1)"; }}
-          onMouseLeave={e => { e.currentTarget.style.color = "#4a4540"; e.currentTarget.style.borderColor = "rgba(255,255,255,0.06)"; }}
+          style={{ width: "100%", padding: "12px", borderRadius: "12px", background: "transparent", border: "1px solid rgba(255,255,255,0.1)", color: "#7a7570", fontSize: "13px", fontFamily: "'DM Sans', sans-serif", cursor: "pointer", transition: "all 0.2s ease" }}
+          onMouseEnter={e => { e.currentTarget.style.color = "#c8c0b8"; e.currentTarget.style.borderColor = "rgba(255,255,255,0.18)"; }}
+          onMouseLeave={e => { e.currentTarget.style.color = "#7a7570"; e.currentTarget.style.borderColor = "rgba(255,255,255,0.1)"; }}
         >
           Try with demo bookmarks
         </button>
@@ -617,4 +617,4 @@ export default function App() {
 
   if (screen === "import") return <ImportScreen onImport={handleImport} onDemo={handleDemo} onStartEmpty={handleStartEmpty} />;
   return <LibraryView bookmarks={bookmarks} setBookmarks={setBookmarks} aiStatus={aiStatus} isDemo={isDemo} onReset={handleReset} />;
-}// updated Thu  9 Apr 2026 08:11:45 IST
+}
