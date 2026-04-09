@@ -282,20 +282,17 @@ function ClaudePromptModal({ prompt, onClose }) {
           }}>
             {copied ? "✓ Copied" : "Copy prompt"}
           </button>
-          <a href="https://claude.ai/new" target="_blank" rel="noopener noreferrer" style={{
+          <a href={`https://claude.ai/new?q=${encodeURIComponent(formatted)}`} target="_blank" rel="noopener noreferrer" style={{
             flex: 1, padding: "11px", borderRadius: "10px", cursor: "pointer",
             background: "rgba(99,179,237,0.1)", border: "1px solid rgba(99,179,237,0.25)",
             color: "#63b3ed", fontSize: "13px", fontFamily: "'DM Sans',sans-serif",
             textDecoration: "none", display: "flex", alignItems: "center", justifyContent: "center", gap: "6px",
             fontWeight: 500,
-          }} onClick={handleCopy}>
+          }}>
             <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M4.304 15.978c.142.355.296.694.462 1.015l-1.6 4.8a.667.667 0 0 0 .84.84l4.8-1.6c.321.166.66.32 1.015.462L12 24l2.179-2.505c.355-.142.694-.296 1.015-.462l4.8 1.6a.667.667 0 0 0 .84-.84l-1.6-4.8c.166-.321.32-.66.462-1.015L24 12l-2.504-2.178a13.17 13.17 0 0 0-.462-1.015l1.6-4.8a.667.667 0 0 0-.84-.84l-4.8 1.6a13.17 13.17 0 0 0-1.015-.463L12 0 9.821 2.504c-.355.142-.694.297-1.015.463l-4.8-1.6a.667.667 0 0 0-.84.84l1.6 4.8A13.17 13.17 0 0 0 4.304 8.02L1.8 10.197 0 12l2.504 2.178c.142.321.296.66.462.978z"/></svg>
-            Copy & open Claude
+            Open in Claude
           </a>
         </div>
-        <p style={{ margin: 0, fontSize: "11px", color: "#4a4540", fontFamily: "'DM Mono',monospace", textAlign: "center", lineHeight: "1.5" }}>
-          Prompt is copied to clipboard — paste it into Claude with ⌘V
-        </p>
       </div>
     </div>
   );
