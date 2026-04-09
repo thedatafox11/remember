@@ -219,7 +219,7 @@ function ImportScreen({ onImport, onDemo, onClose }) {
             Drag this button to your bookmarks bar. When you're on a tweet, click it to send it straight to Remember.
           </p>
           <a
-            href={`javascript:(function(){var u=window.location.href;var t=document.querySelector('[data-testid="tweetText"]');var text=t?t.innerText:'';window.open('https://remember-neon.vercel.app/?url='+encodeURIComponent(u)+'&text='+encodeURIComponent(text),'_blank');})();`}
+            href={`javascript:(function(){var u=window.location.href;var selectors=['[data-testid="tweetText"]','article [lang]','[data-testid="tweet"] [lang]'];var text='';for(var i=0;i<selectors.length;i++){var els=document.querySelectorAll(selectors[i]);if(els.length){var arr=[];els.forEach(function(e){arr.push(e.innerText);});text=arr.join(' ');break;}}if(!text){text=prompt('Could not auto-grab tweet. Paste the tweet text:') || '';}if(text)window.open('https://remember-neon.vercel.app/?url='+encodeURIComponent(u)+'&text='+encodeURIComponent(text),'_blank');})();`}
             style={{ display: "inline-block", padding: "8px 16px", borderRadius: "10px", background: "rgba(200,184,154,0.1)", border: "1px solid rgba(200,184,154,0.25)", color: "#c8b89a", fontSize: "12px", fontFamily: "'DM Mono', monospace", fontWeight: 600, textDecoration: "none", cursor: "grab" }}
             onClick={e => { e.preventDefault(); alert("Drag this button to your bookmarks bar — don't click it here!"); }}
           >
