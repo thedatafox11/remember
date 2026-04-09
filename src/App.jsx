@@ -371,8 +371,6 @@ function BookmarkCard({ bookmark, index, onDelete }) {
             </a>
           )}
 
-          <span style={{ fontSize: "10px", color: "#6b6560", fontFamily: "'DM Mono',monospace" }}>♥ {Number(bookmark.likes).toLocaleString()}</span>
-
           {/* Delete */}
           {!confirmDelete ? (
             <button onClick={() => setConfirmDelete(true)} style={{ background: "none", border: "none", color: "#3a3530", cursor: "pointer", fontSize: "12px", padding: "0 2px", lineHeight: 1 }} title="Remove bookmark">×</button>
