@@ -277,10 +277,11 @@ function ClaudePromptModal({ prompt, onClose }) {
   );
 }
 
-function BookmarkCard({ bookmark, index }) {
+function BookmarkCard({ bookmark, index, onDelete }) {
   const [visible, setVisible] = useState(false);
   const [expanded, setExpanded] = useState(false);
   const [showClaudePrompt, setShowClaudePrompt] = useState(false);
+  const [confirmDelete, setConfirmDelete] = useState(false);
   const c = TOPIC_COLORS[bookmark.topic] || TOPIC_COLORS["Other"];
   const TRUNCATE_LENGTH = 180;
   const isLong = bookmark.text.length > TRUNCATE_LENGTH;
@@ -371,6 +372,17 @@ function BookmarkCard({ bookmark, index }) {
           )}
 
           <span style={{ fontSize: "10px", color: "#6b6560", fontFamily: "'DM Mono',monospace" }}>♥ {Number(bookmark.likes).toLocaleString()}</span>
+
+          {/* Delete */}
+          {!confirmDelete ? (
+            <button onClick={() => setConfirmDelete(true)} style={{ background: "none", border: "none", color: "#3a3530", cursor: "pointer", fontSize: "12px", padding: "0 2px", lineHeight: 1 }} title="Remove bookmark">×</button>
+          ) : (
+            <div style={{ display: "flex", gap: "4px", alignItems: "center" }}>
+              <span style={{ fontSize: "9px", color: "#7a7570", fontFamily: "'DM Mono',monospace" }}>remove?</span>
+              <button onClick={() => onDelete(bookmark.id)} style={{ background: "none", border: "none", color: "#fc8181", cursor: "pointer", fontSize: "9px", fontFamily: "'DM Mono',monospace", fontWeight: 600, padding: 0 }}>yes</button>
+              <button onClick={() => setConfirmDelete(false)} style={{ background: "none", border: "none", color: "#7a7570", cursor: "pointer", fontSize: "9px", fontFamily: "'DM Mono',monospace", padding: 0 }}>no</button>
+            </div>
+          )}
         </div>
       </div>
     </div>
@@ -530,6 +542,10 @@ function LibraryView({ bookmarks, setBookmarks, aiStatus, isDemo, onImport, onCl
   const handleAdd = (bookmark) => {
     setBookmarks(prev => [bookmark, ...prev]);
     setShowAdd(false);
+  };
+
+  const handleDelete = (id) => {
+    setBookmarks(prev => prev.filter(b => b.id !== id));
   };
 
   const allTopics = [...new Set(bookmarks.map(b => b.topic).filter(t => t && t !== "…"))];
@@ -713,7 +729,7 @@ function LibraryView({ bookmarks, setBookmarks, aiStatus, isDemo, onImport, onCl
                 <div key={`d-${item.label}`} style={{ gridColumn: "1/-1" }}><MonthDivider label={item.label} /></div>
               );
               const idx = cardIndex++;
-              return <BookmarkCard key={item.bookmark.id} bookmark={item.bookmark} index={idx} />;
+              return <BookmarkCard key={item.bookmark.id} bookmark={item.bookmark} index={idx} onDelete={handleDelete} />;
             })}
           </div>
         )}
