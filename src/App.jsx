@@ -227,7 +227,10 @@ function ImportScreen({ onImport, onDemo, onClose }) {
 // ─── Bookmark card ────────────────────────────────────────────────────────────
 function BookmarkCard({ bookmark, index }) {
   const [visible, setVisible] = useState(false);
+  const [expanded, setExpanded] = useState(false);
   const c = TOPIC_COLORS[bookmark.topic] || TOPIC_COLORS["Other"];
+  const TRUNCATE_LENGTH = 180;
+  const isLong = bookmark.text.length > TRUNCATE_LENGTH;
   useEffect(() => { const t = setTimeout(() => setVisible(true), index * 30); return () => clearTimeout(t); }, [index]);
 
   return (
@@ -248,7 +251,16 @@ function BookmarkCard({ bookmark, index }) {
         <div style={{ fontSize: "10px", color: "#7e7268", fontFamily: "'DM Mono',monospace", flexShrink: 0 }}>{formatDate(bookmark.date)}</div>
       </div>
 
-      <p style={{ margin: 0, fontSize: "13.5px", lineHeight: "1.7", color: "#d4cdc6", fontFamily: "'Lora',Georgia,serif", letterSpacing: "0.005em" }}>{bookmark.text}</p>
+      <div>
+        <p style={{ margin: 0, fontSize: "13.5px", lineHeight: "1.7", color: "#d4cdc6", fontFamily: "'Lora',Georgia,serif", letterSpacing: "0.005em" }}>
+          {isLong && !expanded ? `${bookmark.text.slice(0, TRUNCATE_LENGTH)}…` : bookmark.text}
+        </p>
+        {isLong && (
+          <button onClick={() => setExpanded(!expanded)} style={{ background: "none", border: "none", color: "#c8b89a", fontSize: "11px", fontFamily: "'DM Mono',monospace", cursor: "pointer", padding: "4px 0 0", letterSpacing: "0.04em" }}>
+            {expanded ? "see less ↑" : "see more ↓"}
+          </button>
+        )}
+      </div>
 
       {bookmark.summary && (
         <div style={{ background: "rgba(255,255,255,0.025)", borderRadius: "8px", padding: "10px 12px", display: "flex", gap: "8px", alignItems: "flex-start" }}>
